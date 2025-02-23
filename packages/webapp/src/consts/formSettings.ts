@@ -60,6 +60,10 @@ export const FORM_LOCALES_OPTIONS = [
   {
     label: 'Chinese (traditional)',
     value: 'zh-tw'
+  },  
+  {
+    label: 'Arabic (Syrian)',
+    value: 'ar-sy'
   }
 ]
 

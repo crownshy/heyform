@@ -1,3 +1,4 @@
+import arSy from './arSy'
 import de from './de'
 import en from './en'
 import fr from './fr'
@@ -11,6 +12,9 @@ import ptBr from './pt-br'
 import cs from './cs'
 
 export const locales: Record<string, any> = {
+  'ar-sy':{
+    translation: arSy
+  },
   en: {
     translation: en
   },

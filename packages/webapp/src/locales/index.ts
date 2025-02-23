@@ -5,6 +5,7 @@ import { initReactI18next } from 'react-i18next'
 import { locales } from '@/pages/form/views/FormComponents'
 
 import en from './en'
+import arSy from './arSy'
 import es from './es'
 import pl from './pl'
 import ptBr from './ptBr'
@@ -14,6 +15,12 @@ import zhTw from './zhTw'
 import cs from './cs'
 
 const resources = {
+  'ar-sy':{
+    translation: {
+      ...arSy,
+      ...locales.en.translation
+    }
+  },
   en: {
     translation: {
       ...en,

@@ -1,3 +1,4 @@
+import arSy from './ar-sy'
 import de from './de'
 import en from './en'
 import es from './es'
@@ -27,6 +28,9 @@ export default {
   },
   'pt-br': {
     translation: ptBr
+  },
+  'ar-sy':{
+    translations: arSy
   },
   tr: {
     translation: tr
