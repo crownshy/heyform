@@ -13,32 +13,32 @@ import { getBrowserId, setBrowserId } from '@/utils'
 import './styles/index.scss'
 
 if (!getBrowserId()) {
-  setBrowserId()
+	setBrowserId()
 }
 
 const App = () => {
-  const Fallback = (
-    <EmptyStates
-      className="flex h-screen flex-col justify-center"
-      icon={<IconMoodSad />}
-      title="Oops, Something went wrong"
-      description="Brace yourself till we get the error fixed. You may also refresh the page or try again later."
-    />
-  )
+	const Fallback = (
+		<EmptyStates
+			className="flex h-screen flex-col justify-center"
+			icon={<IconMoodSad />}
+			title="Oops, Something went wrong"
+			description="Brace yourself till we get the error fixed. You may also refresh the page or try again later."
+		/>
+	)
 
-  return (
-    <ErrorBoundary fallback={Fallback}>
-      <Suspense fallback={<></>}>
-        <StoreProvider value={store}>
-          <Router />
-        </StoreProvider>
-      </Suspense>
-    </ErrorBoundary>
-  )
+	return (
+		<ErrorBoundary fallback={Fallback}>
+			<Suspense fallback={<></>}>
+				<StoreProvider value={store}>
+					<Router />
+				</StoreProvider>
+			</Suspense>
+		</ErrorBoundary>
+	)
 }
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>
+	<StrictMode>
+		<App />
+	</StrictMode>
 )

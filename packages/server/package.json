@@ -53,7 +53,7 @@
     "graphql-type-json": "0.3.2",
     "gt4-node-sdk": "0.0.2",
     "hbs": "4.2.0",
-    "helmet": "4.1.1",
+    "helmet": "8.1.0",
     "ioredis": "4.17.3",
     "json2csv": "5.0.6",
     "jsonwebtoken": "8.5.1",

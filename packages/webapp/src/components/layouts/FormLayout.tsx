@@ -8,16 +8,18 @@ import { FormShareModal } from '@/pages/form/views/FormShareModal'
 import { FormGuardLayout } from './FormGuardLayout'
 
 export const FormLayout: FC<IComponentProps> = ({ children }) => {
-  return (
-    <FormGuardLayout>
-      <div className="flex h-screen flex-col text-sm print:h-auto">
+	return (
+		<FormGuardLayout>
+			<div className="flex h-screen flex-col text-sm print:h-auto">
+				{/*
         <FormNavbar />
-        <div className="content flex-1 bg-slate-50">{children}</div>
-      </div>
+				*/}
+				<div className="content flex-1 bg-slate-50">{children}</div>
+			</div>
 
-      <FormPreviewModal />
-      <FormShareModal />
-      <FormEmbedModal />
-    </FormGuardLayout>
-  )
+			<FormPreviewModal />
+			<FormShareModal />
+			<FormEmbedModal />
+		</FormGuardLayout>
+	)
 }
