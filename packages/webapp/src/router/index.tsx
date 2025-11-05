@@ -39,7 +39,7 @@ const AutoLogin: FC<{}> = () => {
 	useEffect(() => {
 		async function attemptIframeLogin(event: any) {
 			console.log("Attempt login ", event)
-			const allowedOrigins = ["https://stage.comhairle.scot", "https://comhairle.scot", "https://la.comhairle.scot"]
+			const allowedOrigins = ["https://stage.comhairle.scot", "https://comhairle.scot", "https://la.comhairle.scot", "https://www.rewritela.org/"]
 			console.log("origin ", event.origin)
 			console.log("allowed ", !(allowedOrigins.includes(event.origin) || event.origin.startsWith("http://localhost")))
 			console.log("included ", allowedOrigins.includes(event.origin))
