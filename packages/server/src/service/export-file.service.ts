@@ -89,6 +89,11 @@ export class ExportFileService {
         result = helper.isObject(value) ? value.url : helper.isString(value) ? value : ''
         break
 
+      case FieldKindEnum.RANKING:
+        // For CSV export, replace newlines with semicolons for better readability
+        result = parsePlainAnswer(answer).replace(/\n/g, '; ')
+        break
+
       default:
         result = parsePlainAnswer(answer)
         break
