@@ -15,7 +15,7 @@
 		"build": "run-p build:server build:webapp",
 		"build:server": "pnpm --filter ./packages/server build",
 		"build:webapp": "pnpm --filter ./packages/webapp build",
-		"build:deps": "pnpm --filter ./packages/utils build && pnpm --filter ./packages/shared-types-enums build && pnpm --filter ./packages/answer-utils build"
+		"build:deps": "pnpm --filter ./packages/utils build && pnpm --filter ./packages/shared-types-enums build && pnpm --filter ./packages/answer-utils build && pnpm --filter ./packages/form-renderer build && pnpm --filter ./packages/embed build"
 	},
   "dependencies": {
     "npm-run-all": "^4.1.5"
