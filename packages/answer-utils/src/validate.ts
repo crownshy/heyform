@@ -70,6 +70,10 @@ export function validate(rule: FieldsToValidateRules, value: AnswerValue): void 
       validateMultipleChoice(rule, value)
       break
 
+    case FieldKindEnum.RANKING:
+      validateRanking(rule, value)
+      break
+
     case FieldKindEnum.RATING:
     case FieldKindEnum.OPINION_SCALE:
       validateRating(rule, value)
@@ -570,6 +574,53 @@ function validateLegalTerms(rule: FieldsToValidateRules, value: AnswerValue): bo
 
 function validateInputTable(rule: FieldsToValidateRules, value: AnswerValue): boolean {
   return (rule.required && helper.isValidArray(value)) || false
+}
+
+function validateRanking(rule: FieldsToValidateRules, value: AnswerValue) {
+  if (helper.isEmpty(rule.choices)) {
+    return
+  }
+
+  if (!helper.isObject(value) || !helper.isValidArray(value.value)) {
+    throw new ValidateError({
+      id: rule.id,
+      kind: rule.kind,
+      title: rule.title,
+      message: 'This field is required'
+    })
+  }
+
+  // Check if all choices are ranked
+  if (value.value.length !== rule.choices!.length) {
+    throw new ValidateError({
+      id: rule.id,
+      kind: rule.kind,
+      title: rule.title,
+      message: 'Please rank all options'
+    })
+  }
+
+  // Check if all ranked choices are valid
+  const invalidChoices = value.value.filter((choice: string) => !rule.choices!.includes(choice))
+  if (invalidChoices.length > 0) {
+    throw new ValidateError({
+      id: rule.id,
+      kind: rule.kind,
+      title: rule.title,
+      message: 'Invalid ranking choices detected'
+    })
+  }
+
+  // Check for duplicates
+  const uniqueChoices = new Set(value.value)
+  if (uniqueChoices.size !== value.value.length) {
+    throw new ValidateError({
+      id: rule.id,
+      kind: rule.kind,
+      title: rule.title,
+      message: 'Each option can only be ranked once'
+    })
+  }
 }
 
 function validateSignature(rule: FieldsToValidateRules, value: AnswerValue): boolean {

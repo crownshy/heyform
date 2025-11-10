@@ -42,6 +42,10 @@ function parseHtmlAnswer(answer: Answer): string {
         value = parser.multipleChoice(answer)
         break
 
+      case FieldKindEnum.RANKING:
+        value = parser.ranking(answer).replace(/\n/g, '<br>')
+        break
+
       case FieldKindEnum.FULL_NAME:
         const name = parser.fullName(answer)
         value = `${name.firstName} ${name.lastName}`

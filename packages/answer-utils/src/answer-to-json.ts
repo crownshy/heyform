@@ -43,6 +43,10 @@ function parseJsonAnswer(answer: Answer, plain = false): any {
       value = parser.multipleChoice(answer)
       break
 
+    case FieldKindEnum.RANKING:
+      value = parser.ranking(answer)
+      break
+
     case FieldKindEnum.FULL_NAME:
       value = parser.fullName(answer)
       if (plain) {

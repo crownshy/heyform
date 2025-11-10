@@ -3,25 +3,25 @@ import { Args, Mutation, Resolver } from '@nestjs/graphql'
 
 import { applyLogicToFields, fieldValuesToAnswers, flattenFields } from '@heyform-inc/answer-utils'
 import {
-  Answer,
-  CaptchaKindEnum,
-  FieldKindEnum,
-  SubmissionCategoryEnum,
-  SubmissionStatusEnum,
-  Variable
+	Answer,
+	CaptchaKindEnum,
+	FieldKindEnum,
+	SubmissionCategoryEnum,
+	SubmissionStatusEnum,
+	Variable
 } from '@heyform-inc/shared-types-enums'
 import { helper, timestamp } from '@heyform-inc/utils'
 
 import { CompleteSubmissionInput, CompleteSubmissionType } from '@graphql'
 import { EndpointAnonymousIdGuard } from '@guard'
 import {
-  EndpointService,
-  FormReportService,
-  FormService,
-  IntegrationService,
-  PaymentService,
-  SubmissionIpLimitService,
-  SubmissionService
+	EndpointService,
+	FormReportService,
+	FormService,
+	IntegrationService,
+	PaymentService,
+	SubmissionIpLimitService,
+	SubmissionService
 } from '@service'
 import { GqlClient } from '@utils'
 import { ClientInfo } from '@utils'
@@ -29,167 +29,168 @@ import { ClientInfo } from '@utils'
 @Resolver()
 @UseGuards(EndpointAnonymousIdGuard)
 export class CompleteSubmissionResolver {
-  constructor(
-    private readonly endpointService: EndpointService,
-    private readonly formService: FormService,
-    private readonly submissionService: SubmissionService,
-    private readonly submissionIpLimitService: SubmissionIpLimitService,
-    private readonly formReportService: FormReportService,
-    private readonly integrationService: IntegrationService,
-    private readonly paymentService: PaymentService
-  ) {}
+	constructor(
+		private readonly endpointService: EndpointService,
+		private readonly formService: FormService,
+		private readonly submissionService: SubmissionService,
+		private readonly submissionIpLimitService: SubmissionIpLimitService,
+		private readonly formReportService: FormReportService,
+		private readonly integrationService: IntegrationService,
+		private readonly paymentService: PaymentService
+	) { }
 
-  @Mutation(returns => CompleteSubmissionType)
-  async completeSubmission(
-    @GqlClient() client: ClientInfo,
-    @Args('input') input: CompleteSubmissionInput
-  ): Promise<CompleteSubmissionType> {
-    const form = await this.formService.findById(input.formId)
+	@Mutation(returns => CompleteSubmissionType)
+	async completeSubmission(
+		@GqlClient() client: ClientInfo,
+		@Args('input') input: CompleteSubmissionInput
+	): Promise<CompleteSubmissionType> {
+		const form = await this.formService.findById(input.formId)
 
-    if (!form) {
-      throw new BadRequestException('The form does not exist')
-    }
+		if (!form) {
+			throw new BadRequestException('The form does not exist')
+		}
 
-    if (form.suspended) {
-      throw new BadRequestException('The form is suspended')
-    }
+		if (form.suspended) {
+			throw new BadRequestException('The form is suspended')
+		}
 
-    if (form.settings.active !== true) {
-      throw new BadRequestException('The form does not active')
-    }
+		if (form.settings.active !== true) {
+			throw new BadRequestException('The form does not active')
+		}
 
-    if (helper.isEmpty(form!.fields)) {
-      throw new BadRequestException('The form does not have content')
-    }
+		if (helper.isEmpty(form!.fields)) {
+			throw new BadRequestException('The form does not have content')
+		}
 
-    if (
-      form.settings.enableQuotaLimit &&
-      helper.isValid(form.settings.quotaLimit) &&
-      form.settings.quotaLimit > 0
-    ) {
-      const count = await this.submissionService.countInForm(input.formId)
+		if (
+			form.settings.enableQuotaLimit &&
+			helper.isValid(form.settings.quotaLimit) &&
+			form.settings.quotaLimit > 0
+		) {
+			const count = await this.submissionService.countInForm(input.formId)
 
-      if (count >= form.settings.quotaLimit) {
-        throw new BadRequestException(
-          'The submission quota exceeds, new submissions are no longer accepted'
-        )
-      }
-    }
+			if (count >= form.settings.quotaLimit) {
+				throw new BadRequestException(
+					'The submission quota exceeds, new submissions are no longer accepted'
+				)
+			}
+		}
 
-    if (
-      form.settings.enableIpLimit &&
-      helper.isValid(form.settings.ipLimitCount) &&
-      form.settings.ipLimitCount > 0
-    ) {
-      await this.submissionIpLimitService.checkIp(form, client.ip)
-    }
+		if (
+			form.settings.enableIpLimit &&
+			helper.isValid(form.settings.ipLimitCount) &&
+			form.settings.ipLimitCount > 0
+		) {
+			await this.submissionIpLimitService.checkIp(form, client.ip)
+		}
 
-    // Check password
-    if (form.settings.requirePassword) {
-      const { password } = this.endpointService.decryptToken(input.passwordToken)
+		// Check password
+		if (form.settings.requirePassword) {
+			const { password } = this.endpointService.decryptToken(input.passwordToken)
 
-      if (password !== form.settings.password) {
-        throw new BadRequestException('The password does not match')
-      }
-    }
+			if (password !== form.settings.password) {
+				throw new BadRequestException('The password does not match')
+			}
+		}
 
-    // Start submit time
-    const { timestamp: startAt } = this.endpointService.decryptToken(input.openToken)
+		// Start submit time
+		const { timestamp: startAt } = this.endpointService.decryptToken(input.openToken)
 
-    // Bot prevention check
-    if (form.settings?.captchaKind !== CaptchaKindEnum.NONE) {
-      await this.endpointService.antiBotCheck(form.settings?.captchaKind, input)
-    }
+		// Bot prevention check
+		if (form.settings?.captchaKind !== CaptchaKindEnum.NONE) {
+			await this.endpointService.antiBotCheck(form.settings?.captchaKind, input)
+		}
 
-    // Verify user submit content
-    let answers: Answer[] = []
-    let variables: Variable[] = []
+		// Verify user submit content
+		let answers: Answer[] = []
+		let variables: Variable[] = []
 
-    try {
-      const { fields, variables: variableValues } = applyLogicToFields(
-        flattenFields(form.fields, true),
-        form.logics,
-        form.variables,
-        input.answers
-      )
+		try {
+			const { fields, variables: variableValues } = applyLogicToFields(
+				flattenFields(form.fields, true),
+				form.logics,
+				form.variables,
+				input.answers
+			)
 
-      answers = fieldValuesToAnswers(fields, input.answers, input.partialSubmission)
-      variables = form.variables?.map(variable => ({
-        ...variable,
-        value: variableValues[variable.id]
-      }))
-    } catch (err) {
-      throw new BadRequestException(err.response)
-    }
 
-    let category = SubmissionCategoryEnum.INBOX
-    let status = SubmissionStatusEnum.PUBLIC
+			answers = fieldValuesToAnswers(fields, input.answers, input.partialSubmission)
+			variables = form.variables?.map(variable => ({
+				...variable,
+				value: variableValues[variable.id]
+			}))
+		} catch (err) {
+			throw new BadRequestException(err.response)
+		}
 
-    // Spam check
-    if (form.settings?.filterSpam) {
-      const isSpam = await this.endpointService.verifySpam({
-        answers,
-        ip: client.ip
-      })
+		let category = SubmissionCategoryEnum.INBOX
+		let status = SubmissionStatusEnum.PUBLIC
 
-      if (isSpam) {
-        category = SubmissionCategoryEnum.SPAM
-      }
-    }
+		// Spam check
+		if (form.settings?.filterSpam) {
+			const isSpam = await this.endpointService.verifySpam({
+				answers,
+				ip: client.ip
+			})
 
-    // Notification and Webhook still need the submission data
-    // even archive settings have been disabled
-    if (!form.settings?.allowArchive) {
-      status = SubmissionStatusEnum.PRIVATE
-    }
+			if (isSpam) {
+				category = SubmissionCategoryEnum.SPAM
+			}
+		}
 
-    const endAt = timestamp()
+		// Notification and Webhook still need the submission data
+		// even archive settings have been disabled
+		if (!form.settings?.allowArchive) {
+			status = SubmissionStatusEnum.PRIVATE
+		}
 
-    const submissionId = await this.submissionService.create({
-      teamId: form.teamId,
-      formId: form.id,
-      category,
-      title: form.name,
-      answers,
-      hiddenFields: input.hiddenFields,
-      variables,
-      startAt,
-      endAt,
-      ip: client.ip,
-      userAgent: client.userAgent,
-      status
-    })
+		const endAt = timestamp()
 
-    // Payment
-    const answer = answers.find(a => a.kind === FieldKindEnum.PAYMENT)
-    const result: CompleteSubmissionType = {}
+		const submissionId = await this.submissionService.create({
+			teamId: form.teamId,
+			formId: form.id,
+			category,
+			title: form.name,
+			answers,
+			hiddenFields: input.hiddenFields,
+			variables,
+			startAt,
+			endAt,
+			ip: client.ip,
+			userAgent: client.userAgent,
+			status
+		})
 
-    if (helper.isValid(answer) && helper.isValid(form.stripeAccount)) {
-      result.clientSecret = await this.paymentService.createPaymentIntent({
-        amount: answer.value.amount,
-        currency: answer.value.currency,
-        stripeAccountId: form.stripeAccount.accountId,
-        metadata: {
-          submissionId,
-          fieldId: answer.id
-        }
-      })
+		// Payment
+		const answer = answers.find(a => a.kind === FieldKindEnum.PAYMENT)
+		const result: CompleteSubmissionType = {}
 
-      await this.submissionService.updateAnswer(submissionId, {
-        ...answer,
-        value: {
-          ...answer.value,
-          clientSecret: result.clientSecret
-        }
-      })
-    }
+		if (helper.isValid(answer) && helper.isValid(form.stripeAccount)) {
+			result.clientSecret = await this.paymentService.createPaymentIntent({
+				amount: answer.value.amount,
+				currency: answer.value.currency,
+				stripeAccountId: form.stripeAccount.accountId,
+				metadata: {
+					submissionId,
+					fieldId: answer.id
+				}
+			})
 
-    // Form report Queue
-    this.formReportService.addQueue(form.id)
+			await this.submissionService.updateAnswer(submissionId, {
+				...answer,
+				value: {
+					...answer.value,
+					clientSecret: result.clientSecret
+				}
+			})
+		}
 
-    // Integration Queue
-    this.integrationService.addQueue(form.id, submissionId)
+		// Form report Queue
+		this.formReportService.addQueue(form.id)
 
-    return result
-  }
+		// Integration Queue
+		this.integrationService.addQueue(form.id, submissionId)
+
+		return result
+	}
 }

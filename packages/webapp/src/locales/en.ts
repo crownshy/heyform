@@ -720,6 +720,7 @@ export default {
     welcome: 'Welcome',
     thankYou: 'Thank you',
     multipleChoice: 'Multiple choice',
+    ranking: 'Ranking',
     phoneNumber: 'Phone number',
     shortText: 'Short text',
     longText: 'Long text',

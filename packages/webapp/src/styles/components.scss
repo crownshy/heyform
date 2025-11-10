@@ -27,6 +27,32 @@
   box-shadow: var(--heyform-answer-opacity-60-color) 0 0 0 1px inset;
 }
 
+.heyform-radio-grip {
+  @apply flex items-center justify-center w-6 h-6 mr-2 cursor-grab;
+  color: var(--heyform-answer-opacity-60-color);
+  
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.heyform-radio-ghost {
+  opacity: 0.5;
+}
+
+.heyform-radio-chosen {
+  .heyform-radio-container {
+    background-color: var(--heyform-answer-opacity-30-color);
+  }
+}
+
+.heyform-radio-dragging {
+  .heyform-radio-container {
+    transform: rotate(5deg);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  }
+}
+
 .heyform-radio-label {
   @apply flex-1 ml-2 mr-2;
 }
