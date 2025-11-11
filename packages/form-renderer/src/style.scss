@@ -387,7 +387,7 @@ button.button-icon-only {
 .heyform-radio-grip {
   @apply flex items-center justify-center w-6 h-6 mr-2 cursor-grab;
   color: var(--heyform-answer-opacity-60-color);
-  
+
   &:active {
     cursor: grabbing;
   }
@@ -2019,5 +2019,30 @@ button.heyform-submit-button {
     .heyform-branding {
       @apply w-full bg-transparent text-center text-base font-bold text-black;
     }
+  }
+}
+
+// Matrix-specific styles
+.heyform-matrix-rating {
+  @apply ml-4 flex-1;
+
+  .heyform-icon-fill {
+    fill: white !important;
+  }
+
+  .rate-item-hover {
+    .heyform-icon-fill {
+      fill: rgba(255, 255, 255, 0.5) !important;
+    }
+  }
+
+  .rate-item-active {
+    .heyform-icon-fill {
+      fill: white !important;
+    }
+  }
+
+  .heyform-rate-index {
+    color: white;
   }
 }

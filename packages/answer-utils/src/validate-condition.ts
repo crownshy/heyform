@@ -54,6 +54,9 @@ export function validateCondition(
     case FieldKindEnum.OPINION_SCALE:
       return validateNumber(field, condition, values)
 
+    case FieldKindEnum.MATRIX:
+      return validateDefault(field, condition, values)
+
     default:
       return validateDefault(field, condition, values)
   }

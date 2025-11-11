@@ -1600,3 +1600,28 @@ button.heyform-submit-button {
     }
   }
 }
+
+// Matrix-specific styles
+.heyform-matrix-rating {
+  @apply ml-4 flex-1;
+
+  .heyform-icon-fill {
+    fill: white !important;
+  }
+
+  .rate-item-hover {
+    .heyform-icon-fill {
+      fill: rgba(255, 255, 255, 0.5) !important;
+    }
+  }
+
+  .rate-item-active {
+    .heyform-icon-fill {
+      fill: white !important;
+    }
+  }
+
+  .heyform-rate-index {
+    color: white;
+  }
+}

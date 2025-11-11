@@ -6,6 +6,7 @@ import { useStoreContext } from '@/pages/form/Create/store'
 
 import { Basic } from './Basic'
 import { Date } from './Date'
+import { Matrix } from './Matrix'
 import { MultipleChoice } from './MultipleChoice'
 import { OpinionScale } from './OpinionScale'
 import { Payment } from './Payment'
@@ -49,6 +50,9 @@ export const Settings: FC = () => {
 
           case FieldKindEnum.RATING:
             return <Rating field={field} />
+
+          case FieldKindEnum.MATRIX:
+            return <Matrix field={field} />
 
           case FieldKindEnum.STATEMENT:
           case FieldKindEnum.GROUP:

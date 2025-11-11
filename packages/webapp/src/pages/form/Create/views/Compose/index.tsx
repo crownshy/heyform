@@ -14,6 +14,7 @@ import {
 	InputTable,
 	LegalTerms,
 	LongText,
+	Matrix,
 	MultipleChoice,
 	Number,
 	OpinionScale,
@@ -138,6 +139,9 @@ const Fields: FC = () => {
 
 		case FieldKindEnum.RATING:
 			return <Rating key={field.id} field={field} locale={state.locale} parentField={parentField} />
+
+		case FieldKindEnum.MATRIX:
+			return <Matrix key={field.id} field={field} locale={state.locale} parentField={parentField} />
 
 		case FieldKindEnum.SHORT_TEXT:
 			return (

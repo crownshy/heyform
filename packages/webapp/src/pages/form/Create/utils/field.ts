@@ -133,6 +133,25 @@ export function getFieldFromKind(kind: FieldKindEnum | string): FormField {
 			field.properties!.shape = 'star'
 			break
 
+		case FieldKindEnum.MATRIX:
+			field.properties!.total = 5
+			field.properties!.shape = 'star'
+			field.properties!.choices = [
+				{
+					id: nanoid(12),
+					label: 'Option 1'
+				},
+				{
+					id: nanoid(12),
+					label: 'Option 2'
+				},
+				{
+					id: nanoid(12),
+					label: 'Option 3'
+				}
+			]
+			break
+
 		case FieldKindEnum.OPINION_SCALE:
 			field.properties!.total = 10
 			break

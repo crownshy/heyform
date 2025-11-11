@@ -217,6 +217,13 @@ export const FIELD_CONFIGS: FieldConfig[] = [
 		backgroundColor: '#fae8ff'
 	},
 	{
+		kind: FieldKindEnum.MATRIX,
+		icon: IconChartBar,
+		label: 'formBuilder.matrix',
+		textColor: '#a21caf',
+		backgroundColor: '#fae8ff'
+	},
+	{
 		kind: FieldKindEnum.DATE,
 		icon: DateTimeIcon,
 		label: 'formBuilder.dateTime',
@@ -325,7 +332,7 @@ export const BLOCK_GROUPS: FieldGroup[] = [
 	},
 	{
 		name: 'formBuilder.rating',
-		list: [FieldKindEnum.RATING, FieldKindEnum.OPINION_SCALE]
+		list: [FieldKindEnum.RATING, FieldKindEnum.OPINION_SCALE, FieldKindEnum.MATRIX]
 	},
 	{
 		name: 'formBuilder.data',

@@ -33,6 +33,10 @@ function parseHtmlAnswer(answer: Answer): string {
         value = parser.rating(answer)
         break
 
+      case FieldKindEnum.MATRIX:
+        value = parser.matrix(answer)
+        break
+
       case FieldKindEnum.YES_NO:
         value = parser.singleChoice(answer)
         break

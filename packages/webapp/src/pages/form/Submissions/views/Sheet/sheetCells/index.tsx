@@ -9,6 +9,7 @@ import { FileUploadCell } from './FileUploadCell'
 import { FullNameCell } from './FullNameCell'
 import { HiddenFieldCell } from './HiddenFieldCell'
 import { InputTableCell } from './InputTableCell'
+import { MatrixCell } from './MatrixCell'
 import { MultipleChoiceCell } from './MultipleChoiceCell'
 import { OpinionScaleCell } from './OpinionScaleCell'
 import { PaymentCell } from './PaymentCell'
@@ -38,6 +39,9 @@ export const SheetCell: FC<SheetCellProps> = props => {
 
     case FieldKindEnum.RANKING:
       return <RankingCell {...props} />
+
+    case FieldKindEnum.MATRIX:
+      return <MatrixCell {...props} />
 
     case FieldKindEnum.RATING:
     case FieldKindEnum.OPINION_SCALE:

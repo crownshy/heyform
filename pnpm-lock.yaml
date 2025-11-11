@@ -35,11 +35,11 @@ importers:
   packages/answer-utils:
     dependencies:
       '@heyform-inc/shared-types-enums':
-        specifier: ^1.1.8
-        version: 1.3.0
+        specifier: workspace:*
+        version: link:../shared-types-enums
       '@heyform-inc/utils':
-        specifier: ^1.2.0
-        version: 1.2.2
+        specifier: workspace:*
+        version: link:../utils
       big.js:
         specifier: ^6.2.1
         version: 6.2.2
@@ -187,14 +187,14 @@ importers:
   packages/form-renderer:
     dependencies:
       '@heyform-inc/answer-utils':
-        specifier: ^1.2.0
-        version: 1.3.0(@heyform-inc/shared-types-enums@1.3.0)(@heyform-inc/utils@1.2.2)(big.js@6.2.2)(dayjs@1.11.19)(html5parser@2.0.2)(libphonenumber-js@1.12.26)(validator@13.15.22)
+        specifier: workspace:*
+        version: link:../answer-utils
       '@heyform-inc/shared-types-enums':
-        specifier: ^1.3.0
-        version: 1.3.0
+        specifier: workspace:*
+        version: link:../shared-types-enums
       '@heyform-inc/utils':
-        specifier: ^1.2.2
-        version: 1.2.2
+        specifier: workspace:*
+        version: link:../utils
       '@popperjs/core':
         specifier: ^2.11.8
         version: 2.11.8
@@ -2314,24 +2314,6 @@ packages:
     peerDependencies:
       react: ^16 || ^17 || ^18
       react-dom: ^16 || ^17 || ^18
-
-  '@heyform-inc/answer-utils@1.3.0':
-    resolution: {integrity: sha512-N2nfCbZ8k0Hp77jrSf6WFDR53gwoOKaQ59pGFrna3lXLkw0XDc6x49dk3RBq/Tzo6c0R6n4rTEZ+F6BV0GdhJQ==}
-    peerDependencies:
-      '@heyform-inc/shared-types-enums': ^1.1.8
-      '@heyform-inc/utils': ^1.2.0
-      big.js: ^6.2.1
-      dayjs: ^1.11.3
-      html5parser: ^2.0.2
-      libphonenumber-js: ^1.10.7
-      validator: ^13.7.0
-
-  '@heyform-inc/shared-types-enums@1.3.0':
-    resolution: {integrity: sha512-wctVOttEEDPLV+++RzPJxBI0Ea4es0rGs/klYanQoK73QKJ2BXw6p8IrwTKnnYtiysFS8eC6JB4aaoA6UJQjkw==}
-    engines: {node: '>=12.0.0'}
-
-  '@heyform-inc/utils@1.2.2':
-    resolution: {integrity: sha512-UO4uDs8lT6AYCwQaBImzuS/Z/kmeW/ys0lLNNFH8NWvBfB+DJRx5ttO2qyXV6KfAcFh7Ezad7w1a+HmUVLUDbQ==}
 
   '@heyooo-inc/env@0.0.1':
     resolution: {integrity: sha512-Whrvr1zKwic4FA6RC7NJdSlTnzHnq/zVciMFqKx0X8GlrnjW2VYK5GzxmNRSOKLD5pRdJ0qCyvCkWFtwtPrj2g==}
@@ -13215,41 +13197,6 @@ snapshots:
       client-only: 0.0.1
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-
-  '@heyform-inc/answer-utils@1.3.0(@heyform-inc/shared-types-enums@1.3.0)(@heyform-inc/utils@1.2.2)(big.js@6.2.2)(dayjs@1.11.19)(html5parser@2.0.2)(libphonenumber-js@1.12.26)(validator@13.15.22)':
-    dependencies:
-      '@heyform-inc/shared-types-enums': 1.3.0
-      '@heyform-inc/utils': 1.2.2
-      big.js: 6.2.2
-      dayjs: 1.11.19
-      html5parser: 2.0.2
-      libphonenumber-js: 1.12.26
-      validator: 13.15.22
-
-  '@heyform-inc/shared-types-enums@1.3.0': {}
-
-  '@heyform-inc/utils@1.2.2':
-    dependencies:
-      '@types/clone': 2.1.4
-      '@types/mime-types': 2.1.4
-      '@types/ms': 0.7.34
-      '@types/object-path': 0.11.4
-      '@types/qs': 6.14.0
-      '@types/uuid': 10.0.0
-      '@types/validator': 13.15.4
-      clone: 2.1.2
-      dayjs: 1.11.19
-      deep-object-diff: 1.1.9
-      fast-equals: 5.3.2
-      html-to-text: 9.0.5
-      humanize-bytes: 1.0.1
-      ms: 2.1.3
-      nanoid: 3.3.11
-      object-path: 0.11.8
-      qs: 6.14.0
-      slugify: 1.6.6
-      uuid: 10.0.0
-      validator: 13.15.22
 
   '@heyooo-inc/env@0.0.1(dotenv-expand@11.0.7)(dotenv@8.2.0)':
     dependencies:
