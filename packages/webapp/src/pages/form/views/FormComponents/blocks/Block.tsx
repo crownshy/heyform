@@ -27,7 +27,7 @@ export const Block: FC<BlockProps> = ({
   className,
   field: rawField,
   paymentBlockIndex,
-  isScrollable = true,
+  isScrollable = false,
   children,
   ...restProps
 }) => {
