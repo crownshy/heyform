@@ -40,11 +40,14 @@ function fieldIndex(fields?: FormField[], id?: string): number {
 
 function addFieldToGroup(field: FormField, groupLike?: FormField, selectedId?: string) {
   if (groupLike) {
-    const nestedFields = groupLike.properties?.fields || []
-    const index = fieldIndex(groupLike.properties?.fields, selectedId)
-
-    // Insert new field
-    nestedFields.splice(index + 1, 0, field)
+    const existingFields = groupLike.properties?.fields || []
+    const nestedFields = [...existingFields]
+    
+    // Only insert if field doesn't already exist
+    if (!nestedFields.some(f => f.id === field.id)) {
+      const index = fieldIndex(existingFields, selectedId)
+      nestedFields.splice(index + 1, 0, field)
+    }
 
     groupLike.properties = {
       ...groupLike.properties,
@@ -109,53 +112,78 @@ export function addField(
 ): IState {
   const fields = [...state.fields]
   let parentId = rawParentId || state.parentId
+  
+  // Check if field already exists to prevent duplicates from React StrictMode
+  const existsInTopLevel = fields.some(f => f.id === field.id)
+  const existsInGroups = fields.some(f => 
+    f.kind === FieldKindEnum.GROUP && 
+    f.properties?.fields?.some(nested => nested.id === field.id)
+  )
+  
+  // If field already exists, still proceed with state updates but skip the insertion
+  const shouldInsertField = !existsInTopLevel && !existsInGroups
 
-  if (parentId) {
-    const index = fields.findIndex(f => f.id === parentId)
+  if (shouldInsertField) {
+    if (parentId) {
+      const index = fields.findIndex(f => f.id === parentId)
 
-    switch (field.kind) {
-      case FieldKindEnum.WELCOME:
-        fields.splice(-1, 0, field)
-        break
-
-      case FieldKindEnum.THANK_YOU:
-        fields.splice(fields.length - 1, 0, field)
-        break
-
-      case FieldKindEnum.GROUP:
-        fields.splice(index + 1, 0, field)
-        break
-
-      default:
-        addFieldToGroup(field, fields[index], state.selectedId)
-    }
-  } else {
-    let index = fields.findIndex(f => f.kind === FieldKindEnum.THANK_YOU)
-    let selected: FormField | undefined
-
-    if (helper.isValid(state.selectedId)) {
-      index = fields.findIndex(f => f.id === state.selectedId)
-      selected = fields[index]
-
-      switch (selected?.kind) {
+      switch (field.kind) {
         case FieldKindEnum.WELCOME:
-          index = 0
+          fields.splice(-1, 0, field)
           break
 
         case FieldKindEnum.THANK_YOU:
-          index = fields.length - 1
+          fields.splice(fields.length - 1, 0, field)
+          break
+
+        case FieldKindEnum.GROUP:
+          fields.splice(index + 1, 0, field)
           break
 
         default:
-          index += 1
+          addFieldToGroup(field, fields[index], state.selectedId)
+      }
+    } else {
+      let index = fields.findIndex(f => f.kind === FieldKindEnum.THANK_YOU)
+      let selected: FormField | undefined
+
+      if (helper.isValid(state.selectedId)) {
+        index = fields.findIndex(f => f.id === state.selectedId)
+        selected = fields[index]
+
+        switch (selected?.kind) {
+          case FieldKindEnum.WELCOME:
+            index = 0
+            break
+
+          case FieldKindEnum.THANK_YOU:
+            index = fields.length - 1
+            break
+
+          default:
+            index += 1
+        }
+      }
+
+      if (selected?.kind === FieldKindEnum.GROUP && field.kind !== FieldKindEnum.GROUP) {
+        addFieldToGroup(field, selected)
+        parentId = selected.id
+      } else {
+        fields.splice(index, 0, field)
       }
     }
-
-    if (selected?.kind === FieldKindEnum.GROUP && field.kind !== FieldKindEnum.GROUP) {
-      addFieldToGroup(field, selected)
-      parentId = selected.id
+  } else {
+    // Field already exists, but we still need to determine parentId for selection
+    if (parentId) {
+      // parentId is already set
     } else {
-      fields.splice(index, 0, field)
+      // Check if field exists in a group to set parentId correctly
+      for (const f of fields) {
+        if (f.kind === FieldKindEnum.GROUP && f.properties?.fields?.some(nested => nested.id === field.id)) {
+          parentId = f.id
+          break
+        }
+      }
     }
   }
 

@@ -60,6 +60,41 @@ export function serializeFields(rawFields: FormField[]) {
 	}
 }
 
+// Helper function to sanitize choices by removing extra properties
+function sanitizeChoices(choices: any[]) {
+	if (!helper.isValidArray(choices)) {
+		return choices
+	}
+	return choices.map(choice => ({
+		id: choice.id,
+		label: choice.label,
+		...(choice.image && { image: choice.image })
+	}))
+}
+
+// Helper function to sanitize fields recursively
+function sanitizeFieldChoices(field: FormField): FormField {
+	const sanitizedField = { ...field }
+	
+	// Sanitize choices for fields that have them
+	if (field.properties?.choices && helper.isValidArray(field.properties.choices)) {
+		sanitizedField.properties = {
+			...field.properties,
+			choices: sanitizeChoices(field.properties.choices)
+		}
+	}
+	
+	// Handle nested fields in groups recursively
+	if (field.kind === FieldKindEnum.GROUP && helper.isValidArray(field.properties?.fields)) {
+		sanitizedField.properties = {
+			...sanitizedField.properties,
+			fields: field.properties!.fields!.map(sanitizeFieldChoices)
+		}
+	}
+	
+	return sanitizedField
+}
+
 export function initFields(rawFields?: FormField[], rawLogics?: Logic[]) {
 	let list = rawFields?.filter(f => FIELD_KINDS.includes(f.kind)) || []
 
