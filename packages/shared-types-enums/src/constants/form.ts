@@ -23,6 +23,7 @@ export const QUESTION_FIELD_KINDS = [
   FieldKindEnum.YES_NO,
   FieldKindEnum.MULTIPLE_CHOICE,
   FieldKindEnum.PICTURE_CHOICE,
+  FieldKindEnum.RANKING,
 
   // File
   FieldKindEnum.FILE_UPLOAD,
@@ -61,7 +62,8 @@ export const INPUT_FIELD_KINDS = [
 
 export const CHOICES_FIELD_KINDS = [
   FieldKindEnum.MULTIPLE_CHOICE,
-  FieldKindEnum.PICTURE_CHOICE
+  FieldKindEnum.PICTURE_CHOICE,
+  FieldKindEnum.RANKING
 ]
 
 export const FORM_FIELD_KINDS = [

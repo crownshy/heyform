@@ -243,6 +243,15 @@
     box-shadow: var(--heyform-answer-opacity-60-color) 0 0 0 1px inset;
   }
 
+  .heyform-radio-grip {
+    @apply flex items-center justify-center w-6 h-6 mr-2 cursor-grab;
+    color: var(--heyform-answer-opacity-60-color);
+    
+    &:active {
+      cursor: grabbing;
+    }
+  }
+
   .heyform-radio-label {
     @apply flex-1 ml-2 mr-2;
   }

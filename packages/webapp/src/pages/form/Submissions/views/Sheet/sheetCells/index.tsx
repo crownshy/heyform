@@ -13,6 +13,7 @@ import { MultipleChoiceCell } from './MultipleChoiceCell'
 import { OpinionScaleCell } from './OpinionScaleCell'
 import { PaymentCell } from './PaymentCell'
 import { PictureChoiceCell } from './PictureChoiceCell'
+import { RankingCell } from './RankingCell'
 import { SignatureCell } from './SignatureCell'
 import { SubmitDateCell } from './SubmitDateCell'
 import { TextCell } from './TextCell'
@@ -34,6 +35,9 @@ export const SheetCell: FC<SheetCellProps> = props => {
 
     case FieldKindEnum.PICTURE_CHOICE:
       return <PictureChoiceCell {...props} />
+
+    case FieldKindEnum.RANKING:
+      return <RankingCell {...props} />
 
     case FieldKindEnum.RATING:
     case FieldKindEnum.OPINION_SCALE:

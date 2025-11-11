@@ -264,6 +264,10 @@ export interface ChoiceValue {
   other: string
 }
 
+export interface RankingValue {
+  value: string[]
+}
+
 export interface FileUploadValue {
   filename: string
   key: string
@@ -315,6 +319,7 @@ export type InputTableValue = Array<Record<string, string>>
 
 export type AnswerValue =
   | ChoiceValue
+  | RankingValue
   | FileUploadValue
   | AddressValue
   | FullNameValue

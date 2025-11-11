@@ -273,6 +273,7 @@ export const Condition: FC<ConditionProps> = ({ field, value: rawValue, onChange
 
       case FieldKindEnum.MULTIPLE_CHOICE:
       case FieldKindEnum.PICTURE_CHOICE:
+      case FieldKindEnum.RANKING:
         return (
           <MultipleChoiceCondition
             field={field}

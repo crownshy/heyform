@@ -38,6 +38,7 @@ export enum FieldKindEnum {
   YES_NO = 'yes_no',
   MULTIPLE_CHOICE = 'multiple_choice',
   PICTURE_CHOICE = 'picture_choice',
+  RANKING = 'ranking',
 
   // File
   FILE_UPLOAD = 'file_upload',

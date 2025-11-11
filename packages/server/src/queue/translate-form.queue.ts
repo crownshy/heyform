@@ -12,109 +12,110 @@ import { OPENAI_API_KEY, OPENAI_BASE_URL, OPENAI_GPT_MODEL } from '@environments
 import { CHOICES_FIELD_KINDS } from '@heyform-inc/shared-types-enums'
 
 interface TranslateFormQueueJob {
-  formId: string
-  language: string
+	formId: string
+	language: string
 }
 
 const LANGUAGES = {
-  en: 'English',
-  de: 'German',
-  fr: 'French',
+	en: 'English',
+	de: 'German',
+	fr: 'French',
 	pl: 'Polish',
-  tr: 'Turkish',
-  'zh-cn': 'Simplified Chinese',
-  'zh-tw': 'Traditional Chinese'
+	tr: 'Turkish',
+	es: 'Spanish',
+	'zh-cn': 'Simplified Chinese',
+	'zh-tw': 'Traditional Chinese'
 }
 
 @Processor('TranslateFormQueue')
 export class TranslateFormQueue extends BaseQueue {
-  constructor(private readonly formService: FormService) {
-    super()
-  }
+	constructor(private readonly formService: FormService) {
+		super()
+	}
 
-  @Process()
-  async generateReport(job: Job<TranslateFormQueueJob>): Promise<any> {
-    const { formId, language } = job.data
-    const form = await this.formService.findById(formId)
+	@Process()
+	async generateReport(job: Job<TranslateFormQueueJob>): Promise<any> {
+		const { formId, language } = job.data
+		const form = await this.formService.findById(formId)
 
-    if (!form || helper.isEmpty(form.settings?.languages) || helper.isEmpty(form.fields)) {
-      return this.logger.info(
-        `The form with ID ${formId} does not contain any questions requiring translation`
-      )
-    }
+		if (!form || helper.isEmpty(form.settings?.languages) || helper.isEmpty(form.fields)) {
+			return this.logger.info(
+				`The form with ID ${formId} does not contain any questions requiring translation`
+			)
+		}
 
-    const translations: Record<string, any> = {}
+		const translations: Record<string, any> = {}
 
-    form.fields.forEach(f => {
-      const isTitleValid = helper.isValid(f.title)
-      const isDescriptionValid = helper.isValid(f.description)
+		form.fields.forEach(f => {
+			const isTitleValid = helper.isValid(f.title)
+			const isDescriptionValid = helper.isValid(f.description)
 
-      if (isTitleValid || isDescriptionValid) {
-        translations[f.id] = {}
+			if (isTitleValid || isDescriptionValid) {
+				translations[f.id] = {}
 
-        if (isTitleValid) {
-          translations[f.id].title = htmlUtils.serialize(f.title as string[])
-        }
+				if (isTitleValid) {
+					translations[f.id].title = htmlUtils.serialize(f.title as string[])
+				}
 
-        if (isDescriptionValid) {
-          translations[f.id].description = htmlUtils.serialize(f.description as string[])
-        }
-      }
+				if (isDescriptionValid) {
+					translations[f.id].description = htmlUtils.serialize(f.description as string[])
+				}
+			}
 
-      if (CHOICES_FIELD_KINDS.includes(f.kind) && helper.isValidArray(f.properties?.choices)) {
-        translations[f.id].choices = f.properties.choices.reduce(
-          (prev, next) => ({ ...prev, [next.id]: next.label }),
-          {}
-        )
-      }
-    })
+			if (CHOICES_FIELD_KINDS.includes(f.kind) && helper.isValidArray(f.properties?.choices)) {
+				translations[f.id].choices = f.properties.choices.reduce(
+					(prev, next) => ({ ...prev, [next.id]: next.label }),
+					{}
+				)
+			}
+		})
 
-    if (helper.isValid(translations)) {
-      const openai = new OpenAI({
-        apiKey: OPENAI_API_KEY,
-        baseURL: OPENAI_BASE_URL
-      })
+		if (helper.isValid(translations)) {
+			const openai = new OpenAI({
+				apiKey: OPENAI_API_KEY,
+				baseURL: OPENAI_BASE_URL
+			})
 
-      const { choices } = await openai.chat.completions.create({
-        model: OPENAI_GPT_MODEL,
-        response_format: {
-          type: 'json_object'
-        },
-        temperature: 0,
-        max_tokens: 1000,
-        top_p: 1,
-        frequency_penalty: 1,
-        presence_penalty: 1,
-        stream: false,
-        messages: [
-          {
-            role: 'user',
-            content: `Translate this JSON to ${LANGUAGES[language]}, and keep all HTML tags and their attributes!`
-          },
-          {
-            role: 'user',
-            content: JSON.stringify(translations)
-          }
-        ]
-      })
+			const { choices } = await openai.chat.completions.create({
+				model: OPENAI_GPT_MODEL,
+				response_format: {
+					type: 'json_object'
+				},
+				temperature: 0,
+				max_tokens: 1000,
+				top_p: 1,
+				frequency_penalty: 1,
+				presence_penalty: 1,
+				stream: false,
+				messages: [
+					{
+						role: 'user',
+						content: `Translate this JSON to ${LANGUAGES[language]}, and keep all HTML tags and their attributes!`
+					},
+					{
+						role: 'user',
+						content: JSON.stringify(translations)
+					}
+				]
+			})
 
-      if (helper.isValidArray(choices) && helper.isValid(choices[0].message.content)) {
-        const translation = JSON.parse(choices[0].message.content)
+			if (helper.isValidArray(choices) && helper.isValid(choices[0].message.content)) {
+				const translation = JSON.parse(choices[0].message.content)
 
-        Object.keys(translation).forEach(id => {
-          if (translation[id].title) {
-            translation[id].title = htmlUtils.parse(translation[id].title)
-          }
+				Object.keys(translation).forEach(id => {
+					if (translation[id].title) {
+						translation[id].title = htmlUtils.parse(translation[id].title)
+					}
 
-          if (translation[id].description) {
-            translation[id].description = htmlUtils.parse(translation[id].description)
-          }
-        })
+					if (translation[id].description) {
+						translation[id].description = htmlUtils.parse(translation[id].description)
+					}
+				})
 
-        await this.formService.update(formId, {
-          [`translations.${language}`]: translation
-        })
-      }
-    }
-  }
+				await this.formService.update(formId, {
+					[`translations.${language}`]: translation
+				})
+			}
+		}
+	}
 }

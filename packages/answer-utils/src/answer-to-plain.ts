@@ -34,6 +34,10 @@ export function parsePlainAnswer(answer: Answer, livePreview = false): string {
       value = parser.multipleChoice(answer)
       break
 
+    case FieldKindEnum.RANKING:
+      value = parser.ranking(answer)
+      break
+
     case FieldKindEnum.FULL_NAME:
       const name = parser.fullName(answer)
       value = `${name.firstName} ${name.lastName}`

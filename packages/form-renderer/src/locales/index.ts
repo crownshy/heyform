@@ -12,40 +12,40 @@ import ptBr from './pt-br'
 import cs from './cs'
 
 export const locales: Record<string, any> = {
-  'ar-sy':{
-    translation: arSy
-  },
-  en: {
-    translation: en
-  },
-  fr: {
-    translation: fr
-  },
-  de: {
-    translation: de
-  },
-  es: {
-    translation: es
-  },
-  ja: {
-    translation: ja
-  },
-  pl: {
-    translation: pl
-  },
+	'ar-sy': {
+		translation: arSy
+	},
+	en: {
+		translation: en
+	},
+	fr: {
+		translation: fr
+	},
+	de: {
+		translation: de
+	},
+	es: {
+		translation: es
+	},
+	ja: {
+		translation: ja
+	},
+	pl: {
+		translation: pl
+	},
 	'pt-br': {
-    translation: ptBr
-  },
-  tr: {
-    translation: tr
-  },
-  'zh-cn': {
-    translation: zhCn
-  },
-  'zh-tw': {
-    translation: zhTw
-  },
-  cs: {
-    translation: cs
-  }
+		translation: ptBr
+	},
+	tr: {
+		translation: tr
+	},
+	'zh-cn': {
+		translation: zhCn
+	},
+	'zh-tw': {
+		translation: zhTw
+	},
+	cs: {
+		translation: cs
+	}
 }

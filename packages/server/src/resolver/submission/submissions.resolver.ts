@@ -8,35 +8,36 @@ import { SubmissionService } from '@service'
 @Resolver()
 @Auth()
 export class SubmissionsResolver {
-  constructor(private readonly submissionService: SubmissionService) {}
+	constructor(private readonly submissionService: SubmissionService) { }
 
-  @Query(returns => SubmissionsType)
-  @FormGuard()
-  async submissions(
-    @Team() team: TeamModel,
-    @Args('input') input: SubmissionsInput
-  ): Promise<SubmissionsType> {
-    const total = await this.submissionService.count({
-      formId: input.formId,
-      category: input.category,
-      labelId: input.labelId
-    })
+	@Query(returns => SubmissionsType)
+	@FormGuard()
+	async submissions(
+		@Team() team: TeamModel,
+		@Args('input') input: SubmissionsInput
+	): Promise<SubmissionsType> {
+		const total = await this.submissionService.count({
+			formId: input.formId,
+			category: input.category,
+			labelId: input.labelId
+		})
 
-    let submissions: any[] = []
+		let submissions: any[] = []
 
-    if (total > 0) {
-      submissions = await this.submissionService.findAll({
-        formId: input.formId,
-        category: input.category,
-        labelId: input.labelId,
-        page: input.page,
-        limit: input.limit
-      })
-    }
+		if (total > 0) {
+			submissions = await this.submissionService.findAll({
+				formId: input.formId,
+				category: input.category,
+				labelId: input.labelId,
+				page: input.page,
+				limit: input.limit
+			})
+			submissions.forEach((s) => console.log(s.answers))
+		}
 
-    return {
-      total,
-      submissions
-    }
-  }
+		return {
+			total,
+			submissions
+		}
+	}
 }

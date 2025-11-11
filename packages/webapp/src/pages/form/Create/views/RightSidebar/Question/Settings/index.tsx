@@ -10,6 +10,7 @@ import { MultipleChoice } from './MultipleChoice'
 import { OpinionScale } from './OpinionScale'
 import { Payment } from './Payment'
 import { PhoneNumber } from './PhoneNumber'
+import { Ranking } from './Ranking'
 import { Rating } from './Rating'
 import { Statement } from './Statement'
 import { ThankYou } from './ThankYou'
@@ -36,6 +37,9 @@ export const Settings: FC = () => {
           case FieldKindEnum.MULTIPLE_CHOICE:
           case FieldKindEnum.PICTURE_CHOICE:
             return <MultipleChoice field={field} />
+
+          case FieldKindEnum.RANKING:
+            return <Ranking field={field} />
 
           case FieldKindEnum.OPINION_SCALE:
             return <OpinionScale field={field} />

@@ -11,9 +11,7 @@ export const FormLayout: FC<IComponentProps> = ({ children }) => {
 	return (
 		<FormGuardLayout>
 			<div className="flex h-screen flex-col text-sm print:h-auto">
-				{/*
-        <FormNavbar />
-				*/}
+				<FormNavbar />
 				<div className="content flex-1 bg-slate-50">{children}</div>
 			</div>
 

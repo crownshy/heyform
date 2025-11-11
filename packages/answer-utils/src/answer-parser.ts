@@ -40,6 +40,20 @@ function multipleChoice(answer: Answer): string {
     .join(', ')
 }
 
+function ranking(answer: Answer): string {
+  if (!helper.isValidArray(answer.value?.value) || !helper.isValidArray(answer.properties?.choices)) {
+    return ''
+  }
+
+  return answer.value.value
+    .map((choiceId: string, index: number) => {
+      const choice = answer.properties!.choices!.find(row => row.id === choiceId)
+      return choice ? `${index + 1}. ${choice.label}` : ''
+    })
+    .filter(Boolean)
+    .join('\n')
+}
+
 function fullName(answer: Answer): FullNameValue {
   return answer.value
 }
@@ -106,6 +120,7 @@ export default {
   rating,
   singleChoice,
   multipleChoice,
+  ranking,
   fullName,
   address,
   legalTerms,

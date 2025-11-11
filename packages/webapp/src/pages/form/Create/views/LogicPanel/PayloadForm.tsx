@@ -67,6 +67,7 @@ function getPayload(
     case FieldKindEnum.DATE:
     case FieldKindEnum.MULTIPLE_CHOICE:
     case FieldKindEnum.PICTURE_CHOICE:
+    case FieldKindEnum.RANKING:
       payload.condition.comparison = ComparisonEnum.IS
       break
 
@@ -87,6 +88,8 @@ function getPayload(
     payload.condition.expected = choices[0]?.id
   } else if (FieldKindEnum.MULTIPLE_CHOICE === kind || FieldKindEnum.PICTURE_CHOICE === kind) {
     payload.condition.expected = allowMultiple ? [choices[0]?.id] : choices[0]?.id
+  } else if (FieldKindEnum.RANKING === kind) {
+    payload.condition.expected = choices[0]?.id
   }
 
   return payload
