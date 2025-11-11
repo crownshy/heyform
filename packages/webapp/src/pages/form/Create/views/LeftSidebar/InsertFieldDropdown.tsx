@@ -160,7 +160,7 @@ export const InsertFieldDropdown = () => {
   const { t } = useTranslation()
   const [visible, setVisible] = useState(false)
 
-  function handleCreateField(kind: FieldKindEnum) {
+  const handleCreateField = useCallback((kind: FieldKindEnum) => {
     setVisible(false)
     dispatch({
       type: 'addField',
@@ -168,7 +168,7 @@ export const InsertFieldDropdown = () => {
         field: getFieldFromKind(kind)
       }
     })
-  }
+  }, [dispatch])
 
   const dropdownTrigger = useMemo(
     () => (
@@ -180,7 +180,7 @@ export const InsertFieldDropdown = () => {
   )
   const dropdownOverlay = useMemo(
     () => (visible ? <InsertFieldMenu onClick={handleCreateField} /> : <></>),
-    [visible]
+    [visible, handleCreateField]
   )
 
   return (

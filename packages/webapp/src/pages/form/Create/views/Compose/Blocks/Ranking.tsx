@@ -78,7 +78,17 @@ export const Ranking: FC<BlockProps> = ({ field, locale, ...restProps }) => {
   const { t } = useTranslation()
   const { dispatch } = useStoreContext()
 
+  // Helper function to sanitize choices by removing extra properties
+  const sanitizeChoices = (choices: Choice[]) => {
+    return choices.map(choice => ({
+      id: choice.id,
+      label: choice.label,
+      ...(choice.image && { image: choice.image })
+    }))
+  }
+
   function handleAddChoice() {
+    const existingChoices = sanitizeChoices(field.properties?.choices || [])
     dispatch({
       type: 'updateField',
       payload: {
@@ -87,7 +97,7 @@ export const Ranking: FC<BlockProps> = ({ field, locale, ...restProps }) => {
           properties: {
             ...field.properties,
             choices: [
-              ...(field.properties?.choices || []),
+              ...existingChoices,
               {
                 id: nanoid(12),
                 label: ''
@@ -100,6 +110,8 @@ export const Ranking: FC<BlockProps> = ({ field, locale, ...restProps }) => {
   }
 
   function handleChoiceRemove(id: string) {
+    const filteredChoices = field.properties?.choices?.filter(c => c.id !== id) || []
+    const sanitizedChoices = sanitizeChoices(filteredChoices)
     dispatch({
       type: 'updateField',
       payload: {
@@ -107,7 +119,7 @@ export const Ranking: FC<BlockProps> = ({ field, locale, ...restProps }) => {
         updates: {
           properties: {
             ...field.properties,
-            choices: field.properties?.choices?.filter(c => c.id !== id)
+            choices: sanitizedChoices
           }
         }
       }
@@ -118,7 +130,11 @@ export const Ranking: FC<BlockProps> = ({ field, locale, ...restProps }) => {
     const choices = field.properties?.choices || []
     const index = choices.findIndex(c => c.id === id)
 
-    choices[index].label = label
+    if (index !== -1) {
+      choices[index].label = label
+    }
+
+    const sanitizedChoices = sanitizeChoices(choices)
 
     dispatch({
       type: 'updateField',
@@ -127,20 +143,16 @@ export const Ranking: FC<BlockProps> = ({ field, locale, ...restProps }) => {
         updates: {
           properties: {
             ...field.properties,
-            choices
+            choices: sanitizedChoices
           }
         }
       }
     })
   }
 
-  const handleChoicesReorder = useCallback((newChoices: Choice[]) => {
+  function handleChoicesReorder(newChoices: Choice[]) {
     // Clean the choices to remove any extra properties added by ReactSortable
-    const cleanedChoices = newChoices.map(choice => ({
-      id: choice.id,
-      label: choice.label,
-      ...(choice.image && { image: choice.image })
-    }))
+    const cleanedChoices = sanitizeChoices(newChoices)
     
     dispatch({
       type: 'updateField',
@@ -154,7 +166,7 @@ export const Ranking: FC<BlockProps> = ({ field, locale, ...restProps }) => {
         }
       }
     })
-  }, [field.id, field.properties, dispatch])
+  }
 
   const handleAddChoiceCallback = useCallback(handleAddChoice, [field.properties])
   const handleChoiceRemoveCallback = useCallback(handleChoiceRemove, [field.properties])

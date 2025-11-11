@@ -47,6 +47,18 @@ const FormBuilder: FC<{ form: FormModel }> = ({ form }) => {
     })
   }, [form.id])
 
+  // Helper function to sanitize choices before server submission
+  function sanitizeChoices(choices: any[]) {
+    if (!helper.isValidArray(choices)) {
+      return choices
+    }
+    return choices.map(choice => ({
+      id: choice.id,
+      label: choice.label,
+      ...(choice.image && { image: choice.image })
+    }))
+  }
+
   function getUpdates(fields?: IFormField[]) {
     const result = {
       fields: [] as IFormField[]
@@ -62,6 +74,11 @@ const FormBuilder: FC<{ form: FormModel }> = ({ form }) => {
           validations: row.validations,
           properties: row.properties,
           layout: row.layout
+        }
+
+        // Sanitize choices before sending to server
+        if (field.properties?.choices && helper.isValidArray(field.properties.choices)) {
+          field.properties.choices = sanitizeChoices(field.properties.choices)
         }
 
         if (row.kind === FieldKindEnum.GROUP) {
