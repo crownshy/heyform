@@ -79,6 +79,10 @@ export function validate(rule: FieldsToValidateRules, value: AnswerValue): void 
       validateRating(rule, value)
       break
 
+    case FieldKindEnum.MATRIX:
+      validateMatrix(rule, value)
+      break
+
     case FieldKindEnum.DATE:
       validateDate(rule, value)
       break
@@ -357,6 +361,31 @@ function validateRating(rule: FieldsToValidateRules, value: AnswerValue) {
       title: rule.title,
       message: 'Rating value must be number'
     })
+  }
+}
+
+function validateMatrix(rule: FieldsToValidateRules, value: AnswerValue) {
+  if (!helper.isObject(value)) {
+    throw new ValidateError({
+      id: rule.id,
+      kind: rule.kind,
+      title: rule.title,
+      message: 'Matrix value must be an object'
+    })
+  }
+
+  const matrixValue = value as { [key: string]: number }
+  const maxStars = rule.total || 5
+
+  for (const [, rating] of Object.entries(matrixValue)) {
+    if (!validateInt(rating, 1, maxStars)) {
+      throw new ValidateError({
+        id: rule.id,
+        kind: rule.kind,
+        title: rule.title,
+        message: `Matrix rating value must be between 1 and ${maxStars}`
+      })
+    }
   }
 }
 

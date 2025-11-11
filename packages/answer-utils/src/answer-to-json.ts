@@ -34,6 +34,13 @@ function parseJsonAnswer(answer: Answer, plain = false): any {
       value = parser.rating(answer)
       break
 
+    case FieldKindEnum.MATRIX:
+      value = answer.value
+      if (plain) {
+        value = parser.matrix(answer)
+      }
+      break
+
     case FieldKindEnum.YES_NO:
       value = parser.singleChoice(answer)
       break

@@ -732,6 +732,7 @@ export default {
     fullName: 'Full name',
     rating: 'Rating',
     opinionScale: 'Opinion scale',
+    matrix: 'Matrix',
     date: 'Date',
     dateTime: 'Date & time',
     dateRange: 'Date range',

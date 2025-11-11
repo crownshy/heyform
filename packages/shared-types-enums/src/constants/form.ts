@@ -31,6 +31,7 @@ export const QUESTION_FIELD_KINDS = [
   // Rating
   FieldKindEnum.OPINION_SCALE,
   FieldKindEnum.RATING,
+  FieldKindEnum.MATRIX,
 
   // Date & Time
   FieldKindEnum.DATE,
@@ -63,7 +64,8 @@ export const INPUT_FIELD_KINDS = [
 export const CHOICES_FIELD_KINDS = [
   FieldKindEnum.MULTIPLE_CHOICE,
   FieldKindEnum.PICTURE_CHOICE,
-  FieldKindEnum.RANKING
+  FieldKindEnum.RANKING,
+  FieldKindEnum.MATRIX
 ]
 
 export const FORM_FIELD_KINDS = [
@@ -78,7 +80,8 @@ export const CHOICE_FIELD_KINDS = [
 
 export const RATING_FIELD_KINDS = [
   FieldKindEnum.RATING, 
-  FieldKindEnum.OPINION_SCALE
+  FieldKindEnum.OPINION_SCALE,
+  FieldKindEnum.MATRIX
 ]
 
 export const UNSELECTABLE_FIELD_KINDS = [

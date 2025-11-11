@@ -54,6 +54,21 @@ function ranking(answer: Answer): string {
     .join('\n')
 }
 
+function matrix(answer: Answer): string {
+  if (!helper.isObject(answer.value) || !helper.isValidArray(answer.properties?.choices)) {
+    return ''
+  }
+
+  const matrixValue = answer.value as { [key: string]: number }
+  
+  return answer.properties!.choices!
+    .map(choice => {
+      const rating = matrixValue[choice.id]
+      return rating ? `${choice.label}: ${rating} stars` : `${choice.label}: No rating`
+    })
+    .join('\n')
+}
+
 function fullName(answer: Answer): FullNameValue {
   return answer.value
 }
@@ -121,6 +136,7 @@ export default {
   singleChoice,
   multipleChoice,
   ranking,
+  matrix,
   fullName,
   address,
   legalTerms,
