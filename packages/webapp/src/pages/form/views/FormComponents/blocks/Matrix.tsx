@@ -95,12 +95,25 @@ export const Matrix: FC<BlockProps> = ({ field, ...restProps }) => {
 					rules={[
 						{
 							validator: (_, value) => {
+								const ratedCount = value ? Object.keys(value).filter(key => value[key] > 0).length : 0
+								
+								// Standard required field validation
 								if (field.validations?.required) {
-									const answeredCount = value ? Object.keys(value).filter(key => value[key] > 0).length : 0
-									if (answeredCount === 0) {
+									if (ratedCount === 0) {
 										return Promise.reject(t('This field is required'))
 									}
+									
+									// If required AND requireAllRanked is enabled, must rate all options
+									if (field.properties?.requireAllRanked && ratedCount < choices.length) {
+										return Promise.reject(t('Please rank all options'))
+									}
+								} else {
+									// Field is not required, but if requireAllRanked is enabled and user started rating
+									if (field.properties?.requireAllRanked && ratedCount > 0 && ratedCount < choices.length) {
+										return Promise.reject(t('Please rank all options'))
+									}
 								}
+								
 								return Promise.resolve()
 							}
 						}
