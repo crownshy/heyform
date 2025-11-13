@@ -162,6 +162,9 @@ export interface Property {
   redirectUrl?: string
   redirectOnCompletion?: boolean
   redirectDelay?: number
+
+  // Matrix
+  requireAllRanked?: boolean
 }
 
 export interface Validation {

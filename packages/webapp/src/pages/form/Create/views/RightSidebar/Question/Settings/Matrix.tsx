@@ -4,6 +4,7 @@ import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { Select } from '@/components/ui'
+import { SwitchField } from '@/components'
 import {
   RATING_SHAPE_CONFIG,
   RATING_SHAPE_OPTIONS,
@@ -74,8 +75,24 @@ export const Matrix: FC<IBasicProps> = ({ field }) => {
     })
   }
 
+  function handleRequireAllRanked(requireAllRanked: boolean) {
+    dispatch({
+      type: 'updateField',
+      payload: {
+        id: field.id,
+        updates: {
+          properties: {
+            ...field.properties,
+            requireAllRanked
+          }
+        }
+      }
+    })
+  }
+
   const handleTotalCallback = useCallback(handleTotal, [field.properties])
   const handleShapeCallback = useCallback(handleShape, [field.properties])
+  const handleRequireAllRankedCallback = useCallback(handleRequireAllRanked, [field.properties])
 
   return (
     <div className="right-sidebar-settings-item right-sidebar-matrix">
@@ -95,6 +112,13 @@ export const Matrix: FC<IBasicProps> = ({ field }) => {
           optionRender={optionRender}
           value={field.properties?.shape}
           onChange={handleShapeCallback}
+        />
+      </div>
+      <div className="mt-4">
+        <SwitchField
+          label={t('formBuilder.requireAllRanked')}
+          value={field.properties?.requireAllRanked}
+          onChange={handleRequireAllRankedCallback}
         />
       </div>
     </div>

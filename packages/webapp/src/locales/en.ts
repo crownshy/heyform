@@ -676,6 +676,7 @@ export default {
     type: 'Type',
     settings: 'Settings',
     required: 'Required',
+    requireAllRanked: 'Require all options to be ranked',
     dateFormat: 'Date format',
     timeField: 'Time field',
     dateRangeTo: 'to',

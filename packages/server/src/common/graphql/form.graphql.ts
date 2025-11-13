@@ -168,6 +168,9 @@ class SharedPropertyInput {
   @Field({ nullable: true })
   @IsOptional()
   redirectOnCompletion?: boolean
+
+  @Field({ nullable: true })
+  requireAllRanked?: boolean
 }
 
 @InputType()
@@ -699,6 +702,9 @@ export class PropertyType {
 
   @Field({ nullable: true })
   score?: number
+
+  @Field({ nullable: true })
+  requireAllRanked?: boolean
 }
 
 @ObjectType()
