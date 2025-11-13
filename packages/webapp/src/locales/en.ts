@@ -677,6 +677,7 @@ export default {
     settings: 'Settings',
     required: 'Required',
     requireAllRanked: 'Require all options to be ranked',
+    openInNewWindow: 'Open in new window',
     dateFormat: 'Date format',
     timeField: 'Time field',
     dateRangeTo: 'to',

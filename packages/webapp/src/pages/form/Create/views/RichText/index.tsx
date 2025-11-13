@@ -238,7 +238,7 @@ export const RichText: FC<RichTextProps> = ({
         visible={isToolbarOpen}
         range={toolbarRange}
         onClose={hideToolbarCallback}
-        onChange={console.log}
+        onChange={handleUpdateCallback}
       />
     </>
   )

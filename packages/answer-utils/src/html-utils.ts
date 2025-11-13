@@ -28,6 +28,8 @@ const ALLOWED_TAGS = [
 ]
 const ALLOWED_ATTRIBUTES = [
   'href',
+  'target',
+  'rel',
   'class',
   'data-mention',
   'data-variable',
