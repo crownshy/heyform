@@ -36,8 +36,8 @@ export const MultipleChoice: FC<BlockProps> = ({ field, ...restProps }) => {
 				initialValues={{
 					value: state.values[field.id]
 				}}
-				autoSubmit={!allowMultiple}
-				isSubmitShow={allowMultiple}
+				autoSubmit={!allowMultiple && !field.properties?.allowOther}
+				isSubmitShow={allowMultiple || field.properties?.allowOther}
 				field={field}
 				getValues={getValues}
 			>
@@ -54,12 +54,30 @@ export const MultipleChoice: FC<BlockProps> = ({ field, ...restProps }) => {
 									return Promise.resolve()
 								}
 
-								const count = value.value.length + (helper.isValid(value.other) ? 1 : 0)
+								// Check if "other" option is actively being used (has empty text but no regular choices)
+								const hasRegularChoices = value.value && value.value.length > 0
+								const hasOtherProperty = value?.hasOwnProperty('other')
+								const hasOtherText = helper.isValid(value?.other)
+								
+								// If "other" property exists but is empty AND no regular choices are selected,
+								// then user is trying to use "other" option
+								if (field.properties?.allowOther && hasOtherProperty && !hasOtherText && !hasRegularChoices) {
+									return Promise.reject(t('Please enter text for your "Other" choice'))
+								}
+
+								const count = value.value.length + (hasOtherText ? 1 : 0)
 
 								if (count < min) {
-									return Promise.reject(
-										t('Choose at least {{min}} choices', { min: field.validations?.min })
-									)
+									// If min equals max, show "Choose X choices", otherwise "Choose at least X choices"
+									if (max > 0 && min === max) {
+										return Promise.reject(
+											t('Choose {{max}} choices', { max: field.validations?.max })
+										)
+									} else {
+										return Promise.reject(
+											t('Choose at least {{min}} choices', { min: field.validations?.min })
+										)
+									}
 								}
 
 								if (max > 0 && count > max) {

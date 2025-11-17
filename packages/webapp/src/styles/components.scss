@@ -30,7 +30,7 @@
 .heyform-radio-grip {
   @apply flex items-center justify-center w-6 h-6 mr-2 cursor-grab;
   color: var(--heyform-answer-opacity-60-color);
-  
+
   &:active {
     cursor: grabbing;
   }
@@ -1607,6 +1607,8 @@ button.heyform-submit-button {
 
   .heyform-icon-fill {
     fill: white !important;
+		stroke: var(--heyform-answer-color);
+		stroke-width: 2px;
   }
 
   .rate-item-hover {
@@ -1622,6 +1624,6 @@ button.heyform-submit-button {
   }
 
   .heyform-rate-index {
-    color: white;
+    color: var(--heyform-answer-color);
   }
 }

@@ -70,5 +70,6 @@ export default {
   'Previous question': 'Vorherige frage',
   'Next question': 'Nächste frage',
   Other: 'Andere',
-  'Type your answer': 'Geben Sie Ihre Antwort ein'
+  'Type your answer': 'Geben Sie Ihre Antwort ein',
+  'Please enter text for your "Other" choice': 'Bitte geben Sie Text für Ihre "Andere" Auswahl ein'
 }

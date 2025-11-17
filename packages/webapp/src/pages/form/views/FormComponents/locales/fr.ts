@@ -69,5 +69,6 @@ export default {
   'Previous question': 'Question précédente',
   'Next question': 'Question suivante',
   Other: 'Autre',
-  'Type your answer': 'Tapez votre réponse'
+  'Type your answer': 'Tapez votre réponse',
+  'Please enter text for your "Other" choice': 'Veuillez saisir du texte pour votre choix "Autre"'
 }

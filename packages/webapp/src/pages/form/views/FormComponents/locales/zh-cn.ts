@@ -68,5 +68,6 @@ export default {
   'Previous question': '上个问题',
   'Next question': '下个问题',
   Other: '其他',
-  'Type your answer': '输入您的答案'
+  'Type your answer': '输入您的答案',
+  'Please enter text for your "Other" choice': '请为您的"其他"选项输入文本'
 }

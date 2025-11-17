@@ -54,18 +54,22 @@ export const ChoiceRadioGroup: FC<ChoiceRadioGroupProps> = ({
       if (!allowMultiple) {
         newValues = [value]
         setIsOtherSelected(false)
+        // For single choice, clear "other" when selecting a regular choice
+        onChange?.({
+          value: newValues
+        })
       } else {
         if (values.includes(value)) {
           newValues = values.filter(v => v !== value)
         } else {
           newValues = isDisabled ? values : [...values, value]
         }
+        // For multiple choice, keep "other" value if it exists
+        onChange?.({
+          value: newValues,
+          other: otherValue
+        })
       }
-
-      onChange?.({
-        value: newValues,
-        other: otherValue
-      })
     },
     [allowMultiple, isDisabled, otherValue, values]
   )
@@ -83,13 +87,19 @@ export const ChoiceRadioGroup: FC<ChoiceRadioGroupProps> = ({
   const handleOtherClick = useCallback(() => {
     setIsOtherSelected(!isOtherSelected)
 
-    if (!isOtherSelected && !allowMultiple) {
+    // Always update the form value when other is clicked to ensure proper tracking
+    if (!isOtherSelected) {
+      // Selecting other
       onChange?.({
-        value: [],
-        other: otherValue
+        value: allowMultiple ? values : [],
+        other: otherValue || ''
       })
+    } else {
+      // Deselecting other - remove the other property
+      const newValue = { value: values }
+      onChange?.(newValue)
     }
-  }, [isOtherSelected, allowMultiple, otherValue])
+  }, [isOtherSelected, allowMultiple, values, otherValue])
 
   return (
     <div

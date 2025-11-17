@@ -69,6 +69,7 @@ export default {
   'Next question': 'Next question',
   Other: 'Other',
   'Type your answer': 'Type your answer',
+  'Please enter text for your "Other" choice': 'Please enter text for your "Other" choice',
   PaymentAmount: 'Your credit card will be charged: <1>{{currency}}{{price}}</1>',
   PaymentTip:
     'Payment service powered by <1>Stripe</1>, we never store your card number or CVC number.'
