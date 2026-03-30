@@ -77,7 +77,7 @@ async function bootstrap() {
 	// 		referrerPolicy: false
 	// 	})
 	// )
-	let allowedAncestors = ["'self'", "https://comhairle.bloomproject.us", "https://testing.comhairle.scot", "https://bloom.comhairle.scot", "https://demo.comhairle.scot", "https://community.comhairle.scot", "https://waves.comhairle.scot", "https://stage.comhairle.scot", "https://comhairle.scot", "http://localhost:*", "https://la.comhairle.scot", "https://www.rewritela.org/", "https://flow.crown-shy.com"]
+	let allowedAncestors = ["'self'", "https://mepri.comhairle.scot", "https://comhairle.bloomproject.us", "https://testing.comhairle.scot", "https://bloom.comhairle.scot", "https://demo.comhairle.scot", "https://community.comhairle.scot", "https://waves.comhairle.scot", "https://stage.comhairle.scot", "https://comhairle.scot", "http://localhost:*", "https://la.comhairle.scot", "https://www.rewritela.org/", "https://flow.crown-shy.com"]
 	app.use(
 		helmet({
 			frameguard: false, // adds X-Frame-Options: SAMEORIGIN
