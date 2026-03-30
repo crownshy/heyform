@@ -44,7 +44,7 @@ const AutoLogin: FC<{}> = () => {
 			console.log("allowed ", !(allowedOrigins.includes(event.origin) || event.origin.startsWith("http://localhost")))
 			console.log("included ", allowedOrigins.includes(event.origin))
 
-			if (!(allowedOrigins.includes(event.origin) || event.origin.startsWith("http://localhost"))) return;
+			if (!(allowedOrigins.includes(event.origin) || event.origin.startsWith("http://localhost") || event.origin.endsWith("comhairle.scot"))) return;
 
 			const { type, user, password, redirect } = event.data;
 
