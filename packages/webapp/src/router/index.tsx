@@ -41,7 +41,7 @@ const AutoLogin: FC<{}> = () => {
 			console.log("Attempt login ", event)
 			const allowedOrigins = ["https://comhairle.bloomproject.us", "https://demo.comhairle.scot", "https://testing.comhairle.scot", "https://bloom.comhairle.scot", "https://community.comhairle.scot", "https://waves.comhairle.scot", "https://stage.comhairle.scot", "https://comhairle.scot", "https://la.comhairle.scot", "https://www.rewritela.org/"]
 			console.log("origin ", event.origin)
-			console.log("allowed ", !(allowedOrigins.includes(event.origin) || event.origin.startsWith("http://localhost")))
+			console.log("allowed ", !(allowedOrigins.includes(event.origin) || event.origin.startsWith("http://localhost") || event.origin.endsWith("comhairle.scot")))
 			console.log("included ", allowedOrigins.includes(event.origin))
 
 			if (!(allowedOrigins.includes(event.origin) || event.origin.startsWith("http://localhost") || event.origin.endsWith("comhairle.scot"))) return;
