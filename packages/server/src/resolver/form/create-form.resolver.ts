@@ -43,14 +43,10 @@ export class CreateFormResolver {
           title: null,
           description: null,
           kind: FieldKindEnum.SHORT_TEXT,
-          validations: { required: false },
-          layout: {
-            mediaType: 'image',
-            mediaUrl:
-              'https://images.unsplash.com/photo-1646013532943-d5b86e8689b8?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1080&q=80',
-            align: 'split_right',
-            brightness: 0
-          }
+          validations: { required: false }
+          // No default `layout` image: comhairle embeds a fresh form on every survey step, and the
+          // old hardcoded Unsplash image rendered as a broken split-image (in the builder and the
+          // participant view) until an operator manually removed it. Full-width text is the default.
         },
         {
           id: nanoid(12),

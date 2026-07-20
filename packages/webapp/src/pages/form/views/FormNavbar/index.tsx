@@ -21,11 +21,17 @@ export const FormNavbar: FC<IComponentProps> = observer(() => {
 
 	const [visible, open, close] = useVisible()
 
+	// The comhairle admin embeds the builder in an iframe and passes ?partialNav=true so HeyForm
+	// hides its own top chrome entirely, leaving just the form editor inside the step's Setup tab.
+	const hideNavbar = new URLSearchParams(document.location.search).get('partialNav') === 'true'
+	if (hideNavbar) {
+		return null
+	}
+
 	function toProject() {
 		navigate(`/workspace/${workspaceId}/project/${projectId}`)
 	}
 
-	let showPartialNav = new URLSearchParams(document.location.search).get("partialNav") === "true";
 	return (
 		<>
 			<div className="space-between -mt-px grid h-[68px] grid-cols-2 gap-3 border-b border-slate-200 px-4 py-3 md:grid-cols-3">
@@ -46,18 +52,14 @@ export const FormNavbar: FC<IComponentProps> = observer(() => {
 				</div>
 
 				<div className="flex items-center justify-end">
-					{!showPartialNav &&
-						<div className="hidden md:block">
-							<FormActions />
-						</div>
-					}
+					<div className="hidden md:block">
+						<FormActions />
+					</div>
 
 					<Button.Link className="mr-2 !block !p-2 md:!hidden" onClick={open}>
 						<IconMenu2 />
 					</Button.Link>
-					{!showPartialNav &&
-						<UserAccount />
-					}
+					<UserAccount />
 				</div>
 			</div>
 

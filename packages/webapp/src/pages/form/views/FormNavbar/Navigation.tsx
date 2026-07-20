@@ -8,16 +8,7 @@ export const Navigation = () => {
 	const { t } = useTranslation()
 	const { workspaceId, projectId, formId } = useParam()
 
-	let showPartialNav = new URLSearchParams(document.location.search).get("partialNav") === "true";
-
-	let settings =
-	{
-		to: `/workspace/${workspaceId}/project/${projectId}/form/${formId}/settings`,
-		label: t('form.settings'),
-		icon: IconSettings
-	};
-
-	const LINKS = showPartialNav ? [settings] : [
+	const LINKS = [
 		{
 			to: `/workspace/${workspaceId}/project/${projectId}/form/${formId}/create`,
 			label: t('form.create'),
@@ -38,9 +29,12 @@ export const Navigation = () => {
 			label: t('form.submissions'),
 			icon: IconDatabase
 		},
-		settings
+		{
+			to: `/workspace/${workspaceId}/project/${projectId}/form/${formId}/settings`,
+			label: t('form.settings'),
+			icon: IconSettings
+		}
 	]
-
 
 	return (
 		<div
