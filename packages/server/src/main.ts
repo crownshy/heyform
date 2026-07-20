@@ -77,7 +77,7 @@ async function bootstrap() {
 	// 		referrerPolicy: false
 	// 	})
 	// )
-	let allowedAncestors = ["'self'", "https://*.comhairle.scot", "https://comhairle.scot", "https://comhairle.bloomproject.us", "http://localhost:*", "https://www.rewritela.org/", "https://flow.crown-shy.com"]
+	let allowedAncestors = ["'self'", "https://*.comhairle.scot", "https://*.bloomproject.us", "https://comhairle.scot", "https://comhairle.bloomproject.us", "http://localhost:*", "https://www.rewritela.org/", "https://flow.crown-shy.com"]
 	app.use(
 		helmet({
 			frameguard: false, // adds X-Frame-Options: SAMEORIGIN
