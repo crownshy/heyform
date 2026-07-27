@@ -23,7 +23,8 @@ import {
 	flattenFieldsWithGroups,
 	getPreferredLanguage,
 	parseFields,
-	progressPercentage
+	progressPercentage,
+	sendResizeMessage
 } from './utils'
 import { Blocks } from './views/Blocks'
 import { Sidebar } from './views/Sidebar'
@@ -140,6 +141,54 @@ export const Renderer: FC<RendererProps> = ({
 		]
 	)
 	const [state, dispatch] = useReducer(StoreReducer, memoState)
+
+	// Post the active question's content height out to an embedding parent (e.g. comhairle), so a
+	// cross-origin iframe can size itself to the question and stop its footer overlapping long
+	// answers. We read `.heyform-scroll-wrapper` of the active block: its scrollHeight is the
+	// content's natural height (including the bottom margin that keeps the pinned footer clear).
+	// Re-emits on question change, form start, and any reflow (fonts, wrapping options, validation).
+	// Skipped when not embedded.
+	useEffect(() => {
+		if (typeof window === 'undefined' || window.parent === window) return
+
+		let frame = 0
+
+		function emit() {
+			cancelAnimationFrame(frame)
+			frame = requestAnimationFrame(() => {
+				const wrapper = document.querySelector<HTMLElement>(
+					'.heyform-body-active .heyform-scroll-wrapper'
+				)
+
+				if (wrapper) {
+					const height = Math.ceil(wrapper.scrollHeight)
+
+					if (height > 0) {
+						sendResizeMessage(height)
+					}
+				}
+			})
+		}
+
+		emit()
+
+		const wrapper = document.querySelector<HTMLElement>(
+			'.heyform-body-active .heyform-scroll-wrapper'
+		)
+		const observer = new ResizeObserver(emit)
+
+		if (wrapper) {
+			observer.observe(wrapper)
+		}
+
+		window.addEventListener('resize', emit)
+
+		return () => {
+			cancelAnimationFrame(frame)
+			observer.disconnect()
+			window.removeEventListener('resize', emit)
+		}
+	}, [state.scrollIndex, state.isStarted])
 
 	if (!helper.isValidArray(form.fields)) {
 		return <ClosedMessage form={form} />

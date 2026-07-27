@@ -341,7 +341,9 @@
 }
 
 .heyform-scroll-container {
-  @apply flex flex-col items-center justify-center min-h-full;
+  // No justify-center: anchor the question to the top so it grows top-to-bottom instead of
+  // centering (which left big empty gaps above/below short questions in the embed).
+  @apply flex flex-col min-h-full;
 }
 
 .heyform-block-main {
