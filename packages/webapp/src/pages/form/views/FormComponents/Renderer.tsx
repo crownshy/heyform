@@ -144,8 +144,9 @@ export const Renderer: FC<RendererProps> = ({
 
   // Post the active question's content height out to an embedding parent, so a
   // cross-origin iframe can size itself to the question and stop its footer overlapping long
-  // answers. We read `.heyform-scroll-wrapper` of the active block: its scrollHeight is the
-  // content's natural height (including the bottom margin that keeps the pinned footer clear).
+  // answers. We measure `.heyform-block-main` (the question's content box): its offsetHeight is the
+  // real content height, and its bottom margin keeps the pinned footer clear. (The scroll wrapper is
+  // floored to the frame height by min-h-full, so measuring it can't shrink short questions.)
   // Re-emits on question change, form start, and any reflow (fonts, wrapping options, validation).
   // Skipped when not embedded.
   useEffect(() => {
@@ -157,11 +158,11 @@ export const Renderer: FC<RendererProps> = ({
       cancelAnimationFrame(frame)
       frame = requestAnimationFrame(() => {
         const wrapper = document.querySelector<HTMLElement>(
-          '.heyform-body-active .heyform-scroll-wrapper'
+          '.heyform-body-active .heyform-block-main'
         )
 
         if (wrapper) {
-          const height = Math.ceil(wrapper.scrollHeight)
+          const height = Math.ceil(wrapper.offsetHeight)
 
           if (height > 0) {
             sendResizeMessage(height)
@@ -173,7 +174,7 @@ export const Renderer: FC<RendererProps> = ({
     emit()
 
     const wrapper = document.querySelector<HTMLElement>(
-      '.heyform-body-active .heyform-scroll-wrapper'
+      '.heyform-body-active .heyform-block-main'
     )
     const observer = new ResizeObserver(emit)
 

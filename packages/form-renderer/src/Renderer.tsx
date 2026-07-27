@@ -148,10 +148,10 @@ export const FormRenderer: FC<FormRendererProps> = ({
 
   // Report the active question's content height to an embedding parent, so a
   // cross-origin iframe can size itself to the question instead of guessing. The parent can't
-  // measure us across origins, so we measure here and post it out. We read `.heyform-scroll-wrapper`
-  // of the active block: its scrollHeight is the content's natural height (including the generous
-  // bottom margin that keeps the pinned footer clear of the answers). Re-emits on question change
-  // and on any reflow (fonts, wrapping options, validation messages). Skipped when not embedded.
+  // measure us across origins, so we measure here and post it out. We measure `.heyform-block-main`
+  // (the question's content box): its offsetHeight is the real content height, and its bottom margin
+  // keeps the pinned footer clear. (The scroll wrapper is floored to the frame height by min-h-full,
+  // so measuring it can't shrink short questions.) Re-emits on question change and any reflow.
   useEffect(() => {
     if (typeof window === 'undefined' || window.parent === window) return
 
@@ -161,11 +161,11 @@ export const FormRenderer: FC<FormRendererProps> = ({
       cancelAnimationFrame(frame)
       frame = requestAnimationFrame(() => {
         const wrapper = document.querySelector<HTMLElement>(
-          '.heyform-body-active .heyform-scroll-wrapper'
+          '.heyform-body-active .heyform-block-main'
         )
 
         if (wrapper) {
-          const height = Math.ceil(wrapper.scrollHeight)
+          const height = Math.ceil(wrapper.offsetHeight)
 
           if (height > 0) {
             sendMessageToParent('FORM_RESIZE', { height })
@@ -177,7 +177,7 @@ export const FormRenderer: FC<FormRendererProps> = ({
     emit()
 
     const wrapper = document.querySelector<HTMLElement>(
-      '.heyform-body-active .heyform-scroll-wrapper'
+      '.heyform-body-active .heyform-block-main'
     )
     const observer = new ResizeObserver(emit)
 
