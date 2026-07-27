@@ -146,7 +146,7 @@ export const FormRenderer: FC<FormRendererProps> = ({
   )
   const [state, dispatch] = useReducer(StoreReducer, memoState)
 
-  // Report the active question's content height to an embedding parent (e.g. comhairle), so a
+  // Report the active question's content height to an embedding parent, so a
   // cross-origin iframe can size itself to the question instead of guessing. The parent can't
   // measure us across origins, so we measure here and post it out. We read `.heyform-scroll-wrapper`
   // of the active block: its scrollHeight is the content's natural height (including the generous
