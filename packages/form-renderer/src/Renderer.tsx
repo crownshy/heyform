@@ -18,7 +18,12 @@ import type { IState, IStripe } from './store'
 import { StoreContext, StoreReducer, getStorage } from './store'
 import { getTheme } from './theme'
 import type { IFormModel } from './typings'
-import { flattenFieldsWithGroups, parseFields, progressPercentage } from './utils'
+import {
+  flattenFieldsWithGroups,
+  parseFields,
+  progressPercentage,
+  sendMessageToParent
+} from './utils'
 import { Blocks } from './views/Blocks'
 import { Sidebar } from './views/Sidebar'
 
@@ -140,6 +145,54 @@ export const FormRenderer: FC<FormRendererProps> = ({
     [form, locale, autoSave, allowPayment, query]
   )
   const [state, dispatch] = useReducer(StoreReducer, memoState)
+
+  // Report the active question's content height to an embedding parent (e.g. comhairle), so a
+  // cross-origin iframe can size itself to the question instead of guessing. The parent can't
+  // measure us across origins, so we measure here and post it out. We read `.heyform-scroll-wrapper`
+  // of the active block: its scrollHeight is the content's natural height (including the generous
+  // bottom margin that keeps the pinned footer clear of the answers). Re-emits on question change
+  // and on any reflow (fonts, wrapping options, validation messages). Skipped when not embedded.
+  useEffect(() => {
+    if (typeof window === 'undefined' || window.parent === window) return
+
+    let frame = 0
+
+    function emit() {
+      cancelAnimationFrame(frame)
+      frame = requestAnimationFrame(() => {
+        const wrapper = document.querySelector<HTMLElement>(
+          '.heyform-body-active .heyform-scroll-wrapper'
+        )
+
+        if (wrapper) {
+          const height = Math.ceil(wrapper.scrollHeight)
+
+          if (height > 0) {
+            sendMessageToParent('FORM_RESIZE', { height })
+          }
+        }
+      })
+    }
+
+    emit()
+
+    const wrapper = document.querySelector<HTMLElement>(
+      '.heyform-body-active .heyform-scroll-wrapper'
+    )
+    const observer = new ResizeObserver(emit)
+
+    if (wrapper) {
+      observer.observe(wrapper)
+    }
+
+    window.addEventListener('resize', emit)
+
+    return () => {
+      cancelAnimationFrame(frame)
+      observer.disconnect()
+      window.removeEventListener('resize', emit)
+    }
+  }, [state.scrollIndex, state.isStarted, state.instanceId])
 
   // Form suspended
   if (form.suspended) {
