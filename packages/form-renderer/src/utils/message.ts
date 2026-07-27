@@ -1,8 +1,9 @@
-export function sendMessageToParent(eventName: string) {
+export function sendMessageToParent(eventName: string, payload?: Record<string, unknown>) {
   window.parent?.postMessage(
     {
       source: 'HEYFORM',
-      eventName
+      eventName,
+      ...payload
     },
     '*'
   )
