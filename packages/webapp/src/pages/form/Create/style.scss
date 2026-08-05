@@ -1,5 +1,5 @@
 .form-builder {
-  @apply hidden md:flex h-[calc(100vh-68px)];
+  @apply hidden h-full md:flex;
 
   .right-sidebar {
     .tabs-pane-group {
@@ -38,7 +38,7 @@
 }
 
 .field-card-group-toggle-collapse {
-  @apply flex items-center justify-center w-4 text-slate-500;
+  @apply flex w-4 items-center justify-center text-slate-500;
   min-height: 2.5rem;
 }
 
@@ -70,7 +70,7 @@
 }
 
 .insert-field-item-disabled {
-  @apply opacity-60 pointer-events-none;
+  @apply pointer-events-none opacity-60;
 }
 
 .field-card-icon {
@@ -110,10 +110,12 @@
 // ----------------------------------------------------------------------------
 // Compose
 .compose {
-  @apply flex-1 px-4 py-14 bg-slate-50;
+  @apply flex-1 bg-slate-50 px-4 py-14;
 
   &,
-  h1, h2, h3 {
+  h1,
+  h2,
+  h3 {
     font-family: var(--heyform-font-family);
   }
 }
@@ -125,15 +127,14 @@
 }
 
 .compose {
-
   // ----------------------------------------------------------------------------
   // Layout
   .heyform-layout {
-    @apply absolute rounded-lg pointer-events-none;
+    @apply pointer-events-none absolute rounded-lg;
     z-index: 2;
 
     img {
-      @apply block w-full h-full object-cover object-center rounded-lg;
+      @apply block h-full w-full rounded-lg object-cover object-center;
     }
   }
 
@@ -145,7 +146,7 @@
   }
 
   .heyform-block-group-container {
-    @apply flex items-center w-full mx-auto;
+    @apply mx-auto flex w-full items-center;
     max-width: 45rem;
     min-height: 3.75rem;
 
@@ -154,16 +155,16 @@
     }
 
     .heyform-block-title {
-      @apply flex-1 truncate ml-4 mb-0 text-xl;
+      @apply mb-0 ml-4 flex-1 truncate text-xl;
     }
   }
 
   .heyform-layout {
-    @apply absolute rounded-lg pointer-events-none;
+    @apply pointer-events-none absolute rounded-lg;
     z-index: 4;
 
     img {
-      @apply block w-full h-full object-cover object-center rounded-lg;
+      @apply block h-full w-full rounded-lg object-cover object-center;
     }
   }
 
@@ -176,14 +177,14 @@
     @apply flex items-center justify-center;
 
     img {
-      @apply w-auto h-auto max-w-full rounded-none;
+      @apply h-auto w-auto max-w-full rounded-none;
       max-width: 70%;
     }
   }
 
   .heyform-layout-float_left,
   .heyform-layout-split_left {
-    @apply left-0 top-0 w-1/2 h-full;
+    @apply left-0 top-0 h-full w-1/2;
   }
 
   .heyform-layout-float_left {
@@ -200,7 +201,7 @@
 
   .heyform-layout-float_right,
   .heyform-layout-split_right {
-    @apply left-auto right-0 w-1/2 h-full;
+    @apply left-auto right-0 h-full w-1/2;
   }
 
   .heyform-layout-float_right {
@@ -218,11 +219,11 @@
   // ----------------------------------------------------------------------------
   // Radio
   .heyform-radio {
-    @apply h-10 mb-2;
+    @apply mb-2 h-10;
   }
 
   .heyform-radio-container {
-    @apply relative flex w-full h-full p-2 cursor-pointer rounded transition;
+    @apply relative flex h-full w-full cursor-pointer rounded p-2 transition;
 
     background-color: var(--heyform-answer-opacity-10-color);
     color: var(--heyform-answer-color);
@@ -238,42 +239,42 @@
   }
 
   .heyform-radio-hotkey {
-    @apply flex items-center justify-center w-6 h-6 bg-white text-xs font-bold rounded-sm;
+    @apply flex h-6 w-6 items-center justify-center rounded-sm bg-white text-xs font-bold;
     background-color: var(--heyform-background-color);
     box-shadow: var(--heyform-answer-opacity-60-color) 0 0 0 1px inset;
   }
 
   .heyform-radio-grip {
-    @apply flex items-center justify-center w-6 h-6 mr-2 cursor-grab;
+    @apply mr-2 flex h-6 w-6 cursor-grab items-center justify-center;
     color: var(--heyform-answer-opacity-60-color);
-    
+
     &:active {
       cursor: grabbing;
     }
   }
 
   .heyform-radio-label {
-    @apply flex-1 ml-2 mr-2;
+    @apply ml-2 mr-2 flex-1;
   }
 
   .heyform-radio-icon {
     @apply flex items-center justify-center;
 
     svg {
-      @apply w-6 h-6;
+      @apply h-6 w-6;
     }
   }
 
   .heyform-radio-image {
-    @apply flex w-full h-36 items-center justify-center;
+    @apply flex h-36 w-full items-center justify-center;
 
     img {
-      @apply block min-w-full max-h-full min-h-0 object-cover;
+      @apply block max-h-full min-h-0 min-w-full object-cover;
     }
   }
 
   .heyform-radio-actions {
-    @apply absolute right-3 top-3 space-x-2 hidden;
+    @apply absolute right-3 top-3 hidden space-x-2;
 
     .button {
       @apply p-1;
@@ -303,7 +304,7 @@
   }
 
   .heyform-select-container {
-    @apply flex items-center pb-2 cursor-pointer;
+    @apply flex cursor-pointer items-center pb-2;
     color: var(--heyform-answer-color);
     border-bottom: 1px solid var(--heyform-answer-opacity-80-color);
   }
@@ -315,7 +316,7 @@
     &:before {
       content: attr(placeholder);
       color: var(--heyform-answer-opacity-30-color);
-      @apply absolute hidden truncate pointer-events-none text-2xl;
+      @apply pointer-events-none absolute hidden truncate text-2xl;
     }
 
     &:empty:before {
@@ -323,21 +324,21 @@
     }
 
     &:empty:after {
-      content: "";
+      content: '';
       @apply inline-block;
     }
   }
 
   .heyform-select-arrow-icon {
     svg {
-      @apply w-6 h-6;
+      @apply h-6 w-6;
     }
   }
 
   // ----------------------------------------------------------------------------
   // Block
   .heyform-block-container {
-    @apply absolute inset-0 inset-0 px-20 z-10;
+    @apply absolute inset-0 inset-0 z-10 px-20;
     @extend .scrollbar;
 
     &.heyform-block-float_left,
@@ -355,14 +356,14 @@
     @apply mb-8 text-center;
 
     img {
-      @apply inline-block w-auto h-auto;
+      @apply inline-block h-auto w-auto;
       max-width: 75%;
       max-height: 20rem;
     }
   }
 
   .heyform-block {
-    @apply relative w-full mx-auto;
+    @apply relative mx-auto w-full;
     max-width: 45rem;
     padding-top: 7.5rem;
     padding-bottom: 11.5rem;
@@ -378,13 +379,13 @@
 
     .mention,
     .variable,
-		.hiddenfield {
+    .hiddenfield {
       color: var(--heyform-label-color);
     }
   }
 
   .heyform-block-title {
-    @apply text-2xl mb-1;
+    @apply mb-1 text-2xl;
     min-height: 2rem;
     color: var(--heyform-question-color);
   }
@@ -397,10 +398,10 @@
 
   .heyform-block-title,
   .heyform-block-description {
-    @apply relative outline-none justify-start;
+    @apply relative justify-start outline-none;
 
     &:empty:before {
-      @apply absolute opacity-70 pointer-events-none;
+      @apply pointer-events-none absolute opacity-70;
       content: attr(placeholder);
     }
 
@@ -410,34 +411,32 @@
   }
 
   .heyform-block-number {
-    @apply text-base mb-1;
+    @apply mb-1 text-base;
     color: var(--heyform-label-color);
   }
-
 
   // ----------------------------------------------------------------------------
   // Submit
   .heyform-submit-container {
-    @apply flex items-center mt-8 transition-opacity duration-500 justify-start;
+    @apply mt-8 flex items-center justify-start transition-opacity duration-500;
   }
 
   .heyform-submit-button {
-    @apply inline-flex items-center justify-between px-5 py-1.5 text-lg font-medium shadow-none outline-none rounded-md cursor-pointer;
+    @apply inline-flex cursor-pointer items-center justify-between rounded-md px-5 py-1.5 text-lg font-medium shadow-none outline-none;
     min-width: 7.5rem;
     background-color: var(--heyform-button-color);
     color: var(--heyform-button-text-color);
 
     svg {
-      @apply ml-2 -mr-1 h-5 w-5;
+      @apply -mr-1 ml-2 h-5 w-5;
     }
   }
-
 
   // ----------------------------------------------------------------------------
   // Welcome
   .heyform-empty-state {
     .heyform-block-title {
-      @apply text-3xl mb-4;
+      @apply mb-4 text-3xl;
       min-height: 2.25rem;
     }
 
@@ -474,7 +473,7 @@
     }
 
     .heyform-submit-container {
-      @apply mt-0
+      @apply mt-0;
     }
   }
 
@@ -482,7 +481,7 @@
   // Short text
   .heyform-input,
   .heyform-textarea {
-    @apply w-full p-0 pb-2 border-none bg-transparent text-2xl transition outline-none shadow-none;
+    @apply w-full border-none bg-transparent p-0 pb-2 text-2xl shadow-none outline-none transition;
     color: var(--heyform-answer-color);
     border-bottom: 1px solid var(--heyform-answer-opacity-80-color);
 
@@ -511,7 +510,7 @@
   // Opinion scale
   .heyform-opinion-scale {
     .heyform-radio {
-      @apply flex-1 h-14;
+      @apply h-14 flex-1;
     }
 
     .heyform-radio-container {
@@ -524,7 +523,7 @@
   }
 
   .heyform-opinion-scale-labels {
-    @apply flex items-center mt-1;
+    @apply mt-1 flex items-center;
     color: var(--heyform-answer-color);
   }
 
@@ -538,7 +537,7 @@
       background-color: var(--heyform-answer-opacity-10-color);
 
       .heyform-radio-remove {
-        @apply opacity-100 visible;
+        @apply visible opacity-100;
       }
     }
   }
@@ -550,13 +549,13 @@
 
     .input,
     .input-focused {
-      @apply px-0 border-none outline-none shadow-none;
+      @apply border-none px-0 shadow-none outline-none;
       box-shadow: none;
     }
 
     .heyform-radio-label-other,
     input {
-      @apply text-lg w-full;
+      @apply w-full text-lg;
       color: var(--heyform-answer-color);
 
       &::placeholder {
@@ -566,7 +565,7 @@
   }
 
   .heyform-radio-remove {
-    @apply absolute w-6 h-6 p-0.5 -right-3 rounded-full border transition opacity-0 invisible;
+    @apply invisible absolute -right-3 h-6 w-6 rounded-full border p-0.5 opacity-0 transition;
     background-color: var(--heyform-answer-opacity-60-color);
     border-color: var(--heyform-answer-color);
     color: var(--heyform-background-color);
@@ -576,25 +575,25 @@
     }
 
     svg {
-      @apply w-full h-full;
+      @apply h-full w-full;
     }
   }
 
   // ----------------------------------------------------------------------------
   // Picture choice
   .heyform-picture-choice-list {
-    @apply flex flex-wrap -mx-1 -mb-2 items-stretch;
+    @apply -mx-1 -mb-2 flex flex-wrap items-stretch;
 
     .heyform-radio-container:hover {
       background-color: var(--heyform-answer-opacity-10-color);
 
       .heyform-radio-remove {
-        @apply opacity-100 visible;
+        @apply visible opacity-100;
       }
     }
 
     .heyform-radio {
-      @apply w-1/4 px-1 mb-2;
+      @apply mb-2 w-1/4 px-1;
       height: 12rem;
 
       &:hover {
@@ -605,7 +604,7 @@
     }
 
     .heyform-radio-container {
-      @apply relative flex-col p-2.5 w-full;
+      @apply relative w-full flex-col p-2.5;
     }
 
     .heyform-radio-content {
@@ -616,7 +615,7 @@
       @apply py-2.5;
 
       svg {
-        @apply w-8 h-8;
+        @apply h-8 w-8;
         color: var(--heyform-answer-opacity-60-color);
       }
     }
@@ -625,17 +624,18 @@
       @apply absolute right-0 top-0;
 
       svg {
-        @apply absolute top-1/2 left-1/2 -ml-7 mt-0.5;
+        @apply absolute left-1/2 top-1/2 -ml-7 mt-0.5;
         color: var(--heyform-background-color);
       }
 
       &:before {
-        @apply absolute right-0 top-0 w-0 h-0 rounded-r border;
-        content: "";
+        @apply absolute right-0 top-0 h-0 w-0 rounded-r border;
+        content: '';
         border-width: 1.5rem;
         border-style: solid;
         border-image: initial;
-        border-color: var(--heyform-answer-color) var(--heyform-answer-color) transparent transparent;
+        border-color: var(--heyform-answer-color) var(--heyform-answer-color) transparent
+          transparent;
         border-radius: 0.25rem;
       }
     }
@@ -648,7 +648,7 @@
   // -----------------------------------------------------------------------------
   // File upload
   .heyform-file-uploader {
-    @apply flex items-center justify-center h-72 rounded transition cursor-pointer;
+    @apply flex h-72 cursor-pointer items-center justify-center rounded transition;
     color: var(--heyform-answer-color);
     border: 1px dashed var(--heyform-answer-color);
     background-color: var(--heyform-answer-opacity-10-color);
@@ -663,7 +663,7 @@
   }
 
   .heyform-upload-icon {
-    @apply w-20 h-20;
+    @apply h-20 w-20;
     color: var(--heyform-answer-opacity-60-color);
   }
 
@@ -671,7 +671,6 @@
     @apply mt-4;
     color: var(--heyform-label-color);
   }
-
 
   // -----------------------------------------------------------------------------
   // Signature
@@ -682,10 +681,9 @@
   }
 
   .heyform-signature-bottom {
-    @apply flex items-center justify-between mt-4;
+    @apply mt-4 flex items-center justify-between;
     color: var(--heyform-label-color);
   }
-
 
   // ----------------------------------------------------------------------------
   // Rating
@@ -695,11 +693,11 @@
     }
 
     .rate-item {
-      @apply flex flex-col w-16 cursor-pointer;
+      @apply flex w-16 cursor-pointer flex-col;
     }
 
     .heyform-icon {
-      @apply w-16 h-16 mb-2;
+      @apply mb-2 h-16 w-16;
     }
 
     .heyform-icon-stroke {
@@ -728,17 +726,17 @@
   // Phone number
   .heyform-phone-number {
     .heyform-input {
-      @apply w-80 ml-4;
+      @apply ml-4 w-80;
     }
   }
 
   .heyform-calling-code {
-    @apply flex items-center pt-2 pb-4 border-b;
+    @apply flex items-center border-b pb-4 pt-2;
     border-color: var(--heyform-answer-opacity-60-color);
   }
 
   .heyform-phone-arrow-icon {
-    @apply ml-2 w-4 h-4;
+    @apply ml-2 h-4 w-4;
     color: var(--heyform-answer-color);
   }
 
@@ -753,7 +751,7 @@
   }
 
   .heyform-date-label {
-    @apply text-sm mb-2;
+    @apply mb-2 text-sm;
     color: var(--heyform-answer-color);
   }
 
@@ -773,12 +771,12 @@
   }
 
   .heyform-date-divider {
-    @apply text-2xl mb-2 mr-4 ml-5;
+    @apply mb-2 ml-5 mr-4 text-2xl;
     color: var(--heyform-answer-color);
   }
 
   .heyform-date-range-divider {
-    @apply text-2xl mt-7 mb-2 mx-12;
+    @apply mx-12 mb-2 mt-7 text-2xl;
     color: var(--heyform-answer-color);
   }
 
@@ -789,7 +787,6 @@
       @apply mx-0 my-8;
     }
   }
-
 
   // ----------------------------------------------------------------------------
   // Table
@@ -804,7 +801,7 @@
   }
 
   .heyform-add-column {
-    @apply text-lg p-0 underline;
+    @apply p-0 text-lg underline;
     min-height: 1.75rem;
 
     &,
@@ -820,7 +817,7 @@
     @apply relative flex flex-col items-center;
 
     .heyform-radio-remove {
-      @apply right-auto -top-4 cursor-pointer;
+      @apply -top-4 right-auto cursor-pointer;
     }
 
     &:hover {
@@ -830,7 +827,7 @@
     }
 
     input {
-      @apply text-lg border-0 text-center bg-transparent;
+      @apply border-0 bg-transparent text-center text-lg;
       min-height: 1.75rem;
       max-width: 9rem;
       color: var(--heyform-answer-color);
@@ -864,7 +861,7 @@
 
     tr {
       td {
-        @apply h-12 mb-1;
+        @apply mb-1 h-12;
         background: var(--heyform-answer-opacity-10-color);
         border-right: 1px solid var(--heyform-answer-opacity-10-color);
 
@@ -880,7 +877,6 @@
     }
   }
 
-
   // ----------------------------------------------------------------------------
   // Payment
   .heyform-payment-header,
@@ -889,7 +885,7 @@
   }
 
   .heyform-payment-body {
-    @apply mt-8 px-8 pt-10 pb-0 rounded-xl;
+    @apply mt-8 rounded-xl px-8 pb-0 pt-10;
     background-color: var(--heyform-answer-opacity-10-color);
   }
 
@@ -903,7 +899,7 @@
   }
 
   .heyform-payment-wrapper {
-    @apply flex items-start justify-items-stretch w-full space-x-4;
+    @apply flex w-full items-start justify-items-stretch space-x-4;
 
     .heyform-payment-item {
       @apply flex-1;
@@ -925,21 +921,20 @@
   }
 }
 
-
 // ----------------------------------------------------------------------------
 // Right sidebar
 .right-sidebar {
-  @apply flex flex-col w-80 h-full bg-white border-l border-gray-200;
+  @apply flex h-full w-80 flex-col border-l border-gray-200 bg-white;
 
   .tabs-wrapper {
-    @apply flex flex-col h-full;
+    @apply flex h-full flex-col;
   }
 
   .tabs-navbar {
     @apply px-4;
 
     .tabs-nav-list {
-      @apply space-x-0 justify-between;
+      @apply justify-between space-x-0;
     }
 
     .plan-check {
@@ -947,7 +942,7 @@
     }
 
     .tabs-nav-active {
-      @apply text-slate-900 border-gray-900;
+      @apply border-gray-900 text-slate-900;
     }
   }
 
@@ -970,10 +965,10 @@
 }
 
 .right-sidebar-group {
-  @apply px-4 pt-4 pb-6 border-b border-gray-200;
+  @apply border-b border-gray-200 px-4 pb-6 pt-4;
 
   &:nth-last-of-type(1) {
-    @apply pb-4 border-none;
+    @apply border-none pb-4;
   }
 
   .form-item:nth-last-of-type(1) {
@@ -998,7 +993,7 @@
 .right-sidebar-custom-select,
 .right-sidebar-custom-select-popup {
   .field-icon {
-    @apply px-0 mr-2 justify-center;
+    @apply mr-2 justify-center px-0;
 
     svg {
       width: 1.125rem;
@@ -1007,7 +1002,7 @@
   }
 
   .heyform-icon {
-    @apply w-6 h-6 p-0.5 mr-1.5 text-slate-400;
+    @apply mr-1.5 h-6 w-6 p-0.5 text-slate-400;
   }
 
   .flag-icon {
@@ -1051,11 +1046,11 @@
 }
 
 .right-sidebar-layout-switch {
-  @apply flex items-center flex-wrap mt-2 -mx-2.5;
+  @apply -mx-2.5 mt-2 flex flex-wrap items-center;
 }
 
 .right-sidebar-layout-item {
-  @apply w-1/3 mb-4 pl-2.5 pr-2.5;
+  @apply mb-4 w-1/3 pl-2.5 pr-2.5;
 
   svg {
     width: 100%;
@@ -1064,15 +1059,15 @@
 }
 
 .right-sidebar-layout-container {
-  @apply w-full text-slate-400 border border-gray-300 shadow-sm rounded-md cursor-pointer;
+  @apply w-full cursor-pointer rounded-md border border-gray-300 text-slate-400 shadow-sm;
 
   svg {
-    @apply w-full h-auto;
+    @apply h-auto w-full;
   }
 }
 
 .right-sidebar-layout-item-active .right-sidebar-layout-container {
-  @apply text-blue-700 border-blue-600;
+  @apply border-blue-600 text-blue-700;
 }
 
 .color-picker-button {
@@ -1080,31 +1075,31 @@
 
   .button-trailing {
     svg {
-      @apply w-4 h-4;
+      @apply h-4 w-4;
     }
   }
 }
 
 .color-picker-value {
-  @apply relative w-4 h-4 rounded-full;
+  @apply relative h-4 w-4 rounded-full;
 
   &:after {
-    @apply absolute top-0 left-0 w-full h-full rounded-full border border-gray-900 border-opacity-20;
-    content: "";
+    @apply absolute left-0 top-0 h-full w-full rounded-full border border-gray-900 border-opacity-20;
+    content: '';
   }
 }
 
 .color-picker-popup {
-  @apply pt-3 pb-1 px-3;
+  @apply px-3 pb-1 pt-3;
 }
 
 .background-brightness-image {
-  @apply w-16 h-16 rounded object-cover;
+  @apply h-16 w-16 rounded object-cover;
   aspect-ratio: 1/1;
 }
 
 .theme-item {
-  @apply relative h-28 p-4 rounded-md shadow-md cursor-pointer bg-cover bg-center;
+  @apply relative h-28 cursor-pointer rounded-md bg-cover bg-center p-4 shadow-md;
 }
 
 .theme-item-question {
@@ -1116,7 +1111,7 @@
 }
 
 .theme-item-button {
-  @apply w-14 h-4 rounded-xl;
+  @apply h-4 w-14 rounded-xl;
 }
 
 .style-switch-group {
@@ -1132,7 +1127,7 @@
 
   &:not(.rule-list) {
     .field-icon {
-      @apply px-0 justify-center;
+      @apply justify-center px-0;
 
       svg {
         width: 1.125rem;
@@ -1155,7 +1150,7 @@
 }
 
 .variable-item-span {
-  @apply font-medium text-slate-900 ml-2;
+  @apply ml-2 font-medium text-slate-900;
 }
 
 .variable-item-value {
@@ -1173,7 +1168,7 @@
 }
 
 .variable-icon {
-  @apply w-6 h-6 rounded;
+  @apply h-6 w-6 rounded;
   padding: 0.1875rem;
   background-color: #dbeafe;
   color: #1d4ed8;
@@ -1185,7 +1180,7 @@
 }
 
 .logic-flow {
-  @apply relative flex-1 h-full;
+  @apply relative h-full flex-1;
 
   .react-flow__handle {
     @apply pointer-events-none #{!important};
@@ -1196,14 +1191,14 @@
   }
 
   .tab-pane_plan-check {
-    @apply backdrop-blur-none bg-transparent;
+    @apply bg-transparent backdrop-blur-none;
   }
 }
 
 .logic-panel,
 .logic-bulk-edit-panel,
 .variable-panel {
-  @apply fixed right-0 flex flex-col bg-white border-l border-gray-200 shadow-xl z-20;
+  @apply fixed right-0 z-20 flex flex-col border-l border-gray-200 bg-white shadow-xl;
   width: 40rem;
   top: 4.25rem;
   bottom: 0;
@@ -1226,7 +1221,7 @@
   }
 
   .select-value {
-    @apply flex-none w-full;
+    @apply w-full flex-none;
   }
 }
 
@@ -1249,11 +1244,11 @@
 }
 
 .payload-item {
-  @apply flex items-center w-full pl-2 border-l-4 border-gray-200;
+  @apply flex w-full items-center border-l-4 border-gray-200 pl-2;
 }
 
 .payload-item-content {
-  @apply flex items-center flex-1;
+  @apply flex flex-1 items-center;
 }
 
 .rule-condition,
@@ -1272,7 +1267,7 @@
 }
 
 .flow-custom-node {
-  @apply w-56 h-28 p-4 rounded-lg text-sm text-slate-700 bg-white transition-all;
+  @apply h-28 w-56 rounded-lg bg-white p-4 text-sm text-slate-700 transition-all;
   box-shadow: rgba(0, 0, 0, 0.08) 0 0.125rem 0.25rem, rgba(0, 0, 0, 0.06) 0 0.125rem 0.75rem;
 }
 
@@ -1290,7 +1285,7 @@
 }
 
 .flow-custom-node-content {
-  @apply flex items-center h-full;
+  @apply flex h-full items-center;
 
   .field-icon {
     @apply mr-3;
