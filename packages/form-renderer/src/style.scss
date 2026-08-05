@@ -737,6 +737,50 @@ button.button-icon-only {
   }
 }
 
+// ----------------------------------------------------------------------------
+// Inline tooltip on key terms: a small "?" badge top-right, bubble on hover/tap
+.heyform-tooltip {
+  @apply relative cursor-help;
+  outline: none;
+
+  // The little "?" marker, superscripted to the top-right of the term
+  &::after {
+    content: '?';
+    @apply ml-0.5 inline-flex items-center justify-center rounded-full font-semibold;
+    width: 1.1em;
+    height: 1.1em;
+    font-size: 0.62em;
+    line-height: 1;
+    vertical-align: super;
+    opacity: 0.8;
+    background: var(--heyform-answer-color);
+    color: var(--heyform-background-color);
+  }
+
+  // The definition bubble
+  &::before {
+    content: attr(data-tooltip);
+    @apply invisible absolute z-10 rounded-md px-3 py-2 text-sm font-normal normal-case leading-snug opacity-0;
+    left: 50%;
+    bottom: calc(100% + 8px);
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: 16rem;
+    white-space: normal;
+    text-align: left;
+    background: var(--heyform-question-color);
+    color: var(--heyform-background-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+    transition: opacity 0.12s ease, visibility 0.12s ease;
+    pointer-events: none;
+  }
+
+  &:hover::before,
+  &:focus::before {
+    @apply visible opacity-100;
+  }
+}
+
 .heyform-block-number {
   @apply mb-1 text-base;
   color: var(--heyform-label-color);

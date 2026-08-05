@@ -3,7 +3,7 @@ import type { CSSProperties, FC } from 'react'
 import { startTransition, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { BoldIcon, ItalicIcon, LinkIcon, UnderlineIcon, UnlinkIcon } from '@/components'
+import { BoldIcon, InfoIcon, ItalicIcon, LinkIcon, UnderlineIcon, UnlinkIcon } from '@/components'
 import { Button, Checkbox, Form, Input, Portal } from '@/components/ui'
 
 import { getRangeSelection, getStyleFromRect } from './utils'
@@ -20,6 +20,7 @@ interface ActiveState {
 	isUnderline: boolean
 	link?: string
 	linkTarget?: string
+	tooltip?: string
 }
 
 function getActiveState() {
@@ -29,7 +30,8 @@ function getActiveState() {
 		isStrikethrough: document.queryCommandState('strikethrough'),
 		isUnderline: document.queryCommandState('underline'),
 		link: undefined,
-		linkTarget: undefined
+		linkTarget: undefined,
+		tooltip: undefined
 	}
 
 	const sel = window.getSelection()
@@ -39,6 +41,11 @@ function getActiveState() {
 		if (linkElement) {
 			state.link = linkElement.href
 			state.linkTarget = linkElement.target
+		}
+
+		const tooltipElement = sel.anchorNode?.parentElement?.closest('.heyform-tooltip')
+		if (tooltipElement) {
+			state.tooltip = tooltipElement.getAttribute('data-tooltip') || ''
 		}
 	}
 
@@ -56,6 +63,7 @@ export const FloatingToolbar: FC<FloatingToolbarProps> = ({
 	const [portalStyle, setPortalStyle] = useState<CSSProperties>()
 	const [activeState, setActiveState] = useState({} as ActiveState)
 	const [linkBubbleVisible, setLinkBubbleVisible] = useState(false)
+	const [tooltipBubbleVisible, setTooltipBubbleVisible] = useState(false)
 
 	function handleBold() {
 		document.execCommand('bold')
@@ -109,6 +117,76 @@ export const FloatingToolbar: FC<FloatingToolbarProps> = ({
 	function handleUnlink() {
 		document.execCommand('unlink')
 		onChange()
+	}
+
+	// Walk up from the current selection to find the tooltip term it sits inside, if any
+	function getTooltipElement(): HTMLElement | null {
+		let node: Node | null | undefined = range?.startContainer
+
+		while (node && node !== document.body) {
+			if (node instanceof HTMLElement && node.classList.contains('heyform-tooltip')) {
+				return node
+			}
+			node = node.parentNode
+		}
+
+		return null
+	}
+
+	function handleTooltipOpen() {
+		setTooltipBubbleVisible(true)
+	}
+
+	function handleTooltip({ definition }: any) {
+		setTooltipBubbleVisible(false)
+
+		const existing = getTooltipElement()
+
+		if (existing) {
+			// Editing an existing tooltip: just update the definition in place
+			existing.setAttribute('data-tooltip', definition)
+		} else {
+			// Wrap the current selection in a new tooltip term
+			const sel = getRangeSelection(range!)
+			const node = document.createElement('span')
+
+			node.setAttribute('class', 'heyform-tooltip')
+			node.setAttribute('data-tooltip', definition)
+			node.setAttribute('tabindex', '0')
+			node.innerText = sel!.toString()
+
+			range!.deleteContents()
+			range!.insertNode(node)
+
+			// Position cursor after the inserted tooltip term
+			const newRange = document.createRange()
+			newRange.setStartAfter(node)
+			newRange.setEndAfter(node)
+			sel!.removeAllRanges()
+			sel!.addRange(newRange)
+		}
+
+		startTransition(() => {
+			setActiveState(getActiveState())
+			onChange()
+		})
+	}
+
+	function handleRemoveTooltip() {
+		setTooltipBubbleVisible(false)
+
+		const existing = getTooltipElement()
+
+		if (existing?.parentNode) {
+			// Unwrap: swap the tooltip term back to its plain text
+			const text = document.createTextNode(existing.textContent || '')
+			existing.parentNode.replaceChild(text, existing)
+		}
+
+		startTransition(() => {
+			setActiveState(getActiveState())
+			onChange()
+		})
 	}
 
 	function handleSelectRange() {
@@ -166,6 +244,41 @@ export const FloatingToolbar: FC<FloatingToolbarProps> = ({
 								<Checkbox style={{ width: "20px", height: "20px", marginLeft: "20px" }}>{t('formBuilder.openInNewWindow')}</Checkbox>
 							</Form.Item>
 						</Form.Custom>
+					) : tooltipBubbleVisible ? (
+						<Form.Custom
+							initialValues={{
+								definition: activeState.tooltip
+							}}
+							submitText="Apply"
+							submitOptions={{
+								className: 'mt-2',
+								type: 'primary',
+								block: true
+							}}
+							onlySubmitOnValueChange={true}
+							request={handleTooltip}
+						>
+							<div className="w-80 p-1">
+								<div className="mb-1 flex items-center justify-between">
+									<span className="text-sm font-medium text-slate-700">Tooltip definition</span>
+									{activeState.tooltip && (
+										<Button.Link
+											className="text-sm text-red-600 hover:text-red-700"
+											onClick={handleRemoveTooltip}
+										>
+											Remove
+										</Button.Link>
+									)}
+								</div>
+								<Form.Item name="definition" rules={[{ required: true }]}>
+									<Input.Textarea
+										className="w-full"
+										rows={3}
+										placeholder="Enter the definition to show when someone hovers this term"
+									/>
+								</Form.Item>
+							</div>
+						</Form.Custom>
 					) : (
 						<>
 							<Button.Link leading={<BoldIcon className="text-slate-700" />} onClick={handleBold} />
@@ -180,6 +293,10 @@ export const FloatingToolbar: FC<FloatingToolbarProps> = ({
 							<Button.Link
 								leading={<LinkIcon className="text-slate-700" />}
 								onClick={handleLinkOpen}
+							/>
+							<Button.Link
+								leading={<InfoIcon className="text-slate-700" />}
+								onClick={handleTooltipOpen}
 							/>
 							{activeState.link && (
 								<Button.Link

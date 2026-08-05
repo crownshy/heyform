@@ -34,6 +34,8 @@ const ALLOWED_ATTRIBUTES = [
   'data-mention',
   'data-variable',
   'data-hiddenfield',
+  'data-tooltip',
+  'tabindex',
   'contenteditable',
   'style'
 ]
