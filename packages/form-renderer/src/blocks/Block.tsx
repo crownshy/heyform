@@ -4,7 +4,7 @@ import { helper } from '@heyform-inc/utils'
 import clsx from 'clsx'
 import { FC, WheelEvent, useEffect, useMemo, useState } from 'react'
 
-import { Layout } from '../components'
+import { HtmlContent, Layout } from '../components'
 import { useStore } from '../store'
 import type { IComponentProps, IFormField } from '../typings'
 import { questionNumber, removeHeading, replaceHTML, useTranslation } from '../utils'
@@ -149,15 +149,16 @@ export const Block: FC<BlockProps> = ({
                         </div>
                       )}
                       {field.title && (
-                        <h1
+                        <HtmlContent
+                          as="h1"
                           className="heyform-block-title"
-                          dangerouslySetInnerHTML={{ __html: removeHeading(field.title as string) }}
+                          html={removeHeading(field.title as string)}
                         />
                       )}
                       {field.description && (
-                        <div
+                        <HtmlContent
                           className="heyform-block-description"
-                          dangerouslySetInnerHTML={{ __html: field.description as string }}
+                          html={field.description as string}
                         />
                       )}
                     </div>

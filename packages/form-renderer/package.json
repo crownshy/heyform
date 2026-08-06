@@ -59,6 +59,7 @@
     "big.js": "^6.2.2",
     "clsx": "^2.1.1",
     "flag-icons": "^7.2.3",
+    "html-react-parser": "^5.1.18",
     "i18next": "^23.16.2",
     "libphonenumber-js": "^1.11.12",
     "rc-field-form": "^2.2.1",

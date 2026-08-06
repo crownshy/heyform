@@ -757,28 +757,9 @@ button.button-icon-only {
     color: var(--heyform-background-color);
   }
 
-  // The definition bubble
-  &::before {
-    content: attr(data-tooltip);
-    @apply invisible absolute z-10 rounded-md px-3 py-2 text-sm font-normal normal-case leading-snug opacity-0;
-    left: 50%;
-    bottom: calc(100% + 8px);
-    transform: translateX(-50%);
-    width: max-content;
-    max-width: 16rem;
-    white-space: normal;
-    text-align: left;
-    background: var(--heyform-question-color);
-    color: var(--heyform-background-color);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
-    transition: opacity 0.12s ease, visibility 0.12s ease;
-    pointer-events: none;
-  }
-
-  &:hover::before,
-  &:focus::before {
-    @apply visible opacity-100;
-  }
+  // The definition bubble itself is rendered by the Radix <Tooltip> (see
+  // HtmlContent.tsx / .heyform-tooltip-inline below), which portals out of the
+  // overflow/scroll containers and auto-flips to stay inside the viewport.
 }
 
 .heyform-block-number {
@@ -1586,6 +1567,23 @@ button.button-icon-only {
 .heyform-tooltip-content {
   background-color: var(--heyform-button-color);
   color: var(--heyform-button-text-color);
+}
+
+// Inline term tooltips (the "?" definitions inside a question title/description).
+// Uses the darker question color like the original bubble, wider than the nav
+// tooltips, and adapts to narrow / mobile viewports.
+.heyform-tooltip-content.heyform-tooltip-inline {
+  max-width: 20rem;
+  white-space: normal;
+  text-align: left;
+  font-weight: 400;
+  line-height: 1.4;
+  background-color: var(--heyform-question-color);
+  color: var(--heyform-background-color);
+
+  @media (max-width: 640px) {
+    max-width: calc(100vw - 2rem);
+  }
 }
 
 .heyform-pagination {

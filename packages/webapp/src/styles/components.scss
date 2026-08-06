@@ -395,7 +395,14 @@
     color: var(--heyform-background-color);
   }
 
-  // The definition bubble
+  // In the form preview the definition bubble is rendered by <InlineTooltip>
+  // (Floating UI + portal, see InlineTooltip.tsx / .heyform-tooltip-inline
+  // below). Inside the rich-text editor there is no InlineTooltip, so we keep a
+  // pure-CSS hover bubble there (scoped to .rich-text so the preview doesn't get
+  // both a CSS bubble and the portaled one).
+}
+
+.rich-text .heyform-tooltip {
   &::before {
     content: attr(data-tooltip);
     @apply invisible absolute z-10 rounded-md px-3 py-2 text-sm font-normal normal-case leading-snug opacity-0;
@@ -416,6 +423,23 @@
   &:hover::before,
   &:focus::before {
     @apply visible opacity-100;
+  }
+}
+
+// The portaled inline tooltip bubble. Rendered at document.body, so it relies on
+// the theme CSS variables being defined on <html>. Wider than before and
+// adapts to narrow / mobile viewports.
+.heyform-tooltip-inline {
+  @apply absolute z-[100] rounded-md px-3 py-2 text-sm font-normal normal-case leading-snug;
+  max-width: 20rem;
+  white-space: normal;
+  text-align: left;
+  background: var(--heyform-question-color);
+  color: var(--heyform-background-color);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+
+  @media (max-width: 640px) {
+    max-width: calc(100vw - 2rem);
   }
 }
 
