@@ -3,7 +3,8 @@ FROM node:18.20.0-alpine3.19 as base
 ARG APP_PATH=/app
 WORKDIR $APP_PATH
 
-RUN npm install -g pnpm
+# Pin pnpm (requires Node >=18.12); pnpm 11 bumped the requirement to Node >=22.13
+RUN npm install -g pnpm@10.34.5
 RUN apk add --no-cache python3 make g++
 
 COPY package.json $APP_PATH/package.json
@@ -27,7 +28,8 @@ FROM node:18.20.0-alpine3.19 as runner
 ARG APP_PATH=/app
 WORKDIR $APP_PATH
 
-RUN npm install -g pnpm
+# Pin pnpm (requires Node >=18.12); pnpm 11 bumped the requirement to Node >=22.13
+RUN npm install -g pnpm@10.34.5
 RUN apk add --no-cache python3 make g++
 
 COPY --from=base $APP_PATH/package.json ./package.json
