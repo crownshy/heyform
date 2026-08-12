@@ -10,7 +10,7 @@ import { helper, nanoid } from '@heyform-inc/utils'
 import * as Tooltip from '@radix-ui/react-tooltip'
 import clsx from 'clsx'
 import type { FC } from 'react'
-import { useEffect, useMemo, useReducer, useState } from 'react'
+import { useEffect, useMemo, useReducer, useRef, useState } from 'react'
 
 import { ClosedMessage } from './blocks/ClosedMessage'
 import { SuspendedMessage } from './blocks/SuspendedMessage'
@@ -152,6 +152,12 @@ export const FormRenderer: FC<FormRendererProps> = ({
   // (the question's content box): its offsetHeight is the real content height, and its bottom margin
   // keeps the pinned footer clear. (The scroll wrapper is floored to the frame height by min-h-full,
   // so measuring it can't shrink short questions.) Re-emits on question change and any reflow.
+  //
+  // We also answer a `REQUEST_RESIZE` ping from the parent by re-measuring on demand. The mount emit
+  // is one-shot, so on a hard refresh (where a cached iframe can boot and emit before the parent's
+  // message listener is attached) that first height can be missed and the frame stays stuck at its
+  // fallback height. The parent pings until it hears a height back, and this handler replies, which
+  // makes the handshake self-healing instead of dependent on who booted first.
   useEffect(() => {
     if (typeof window === 'undefined' || window.parent === window) return
 
@@ -174,11 +180,15 @@ export const FormRenderer: FC<FormRendererProps> = ({
       })
     }
 
+    function onParentMessage(e: MessageEvent) {
+      if (e.data?.source === 'COMHAIRLE' && e.data.eventName === 'REQUEST_RESIZE') {
+        emit()
+      }
+    }
+
     emit()
 
-    const wrapper = document.querySelector<HTMLElement>(
-      '.heyform-body-active .heyform-block-main'
-    )
+    const wrapper = document.querySelector<HTMLElement>('.heyform-body-active .heyform-block-main')
     const observer = new ResizeObserver(emit)
 
     if (wrapper) {
@@ -186,13 +196,30 @@ export const FormRenderer: FC<FormRendererProps> = ({
     }
 
     window.addEventListener('resize', emit)
+    window.addEventListener('message', onParentMessage)
 
     return () => {
       cancelAnimationFrame(frame)
       observer.disconnect()
       window.removeEventListener('resize', emit)
+      window.removeEventListener('message', onParentMessage)
     }
   }, [state.scrollIndex, state.isStarted, state.instanceId])
+
+  // Tell an embedding parent when the active question changes so it can scroll the survey back to
+  // the top. The iframe auto-sizes to each question, so the parent window (not the iframe) is what
+  // scrolls; after clicking Next it would otherwise stay at the previous question's scroll offset.
+  // We compare against the previous index (rather than skipping a "first run" flag) so a genuine
+  // navigation is the only trigger, even if the effect is invoked twice on mount under StrictMode.
+  const prevScrollIndex = useRef(state.scrollIndex)
+  useEffect(() => {
+    if (typeof window === 'undefined' || window.parent === window) return
+
+    if (prevScrollIndex.current === state.scrollIndex) return
+    prevScrollIndex.current = state.scrollIndex
+
+    sendMessageToParent('FORM_STEP_CHANGE')
+  }, [state.scrollIndex])
 
   // Form suspended
   if (form.suspended) {
