@@ -21,3 +21,16 @@ export function sendResizeMessage(height: number) {
     '*'
   )
 }
+
+// Tell an embedding parent that a new question became active, so it can scroll the page back to the
+// top. The iframe auto-sizes to each question, so the parent window (not the iframe) is what scrolls;
+// without this it would stay at the previous question's scroll offset after advancing.
+export function sendStepChangeMessage() {
+  window.parent?.postMessage(
+    {
+      source: 'HEYFORM',
+      eventName: 'FORM_STEP_CHANGE'
+    },
+    '*'
+  )
+}

@@ -9,7 +9,7 @@ import {
 import { helper } from '@heyform-inc/utils'
 import clsx from 'clsx'
 import type { FC } from 'react'
-import { useEffect, useMemo, useReducer, useState } from 'react'
+import { useEffect, useMemo, useReducer, useRef, useState } from 'react'
 
 import { FORM_LOCALES_OPTIONS } from '@/consts'
 import { useQuery } from '@/utils'
@@ -24,7 +24,8 @@ import {
   getPreferredLanguage,
   parseFields,
   progressPercentage,
-  sendResizeMessage
+  sendResizeMessage,
+  sendStepChangeMessage
 } from './utils'
 import { Blocks } from './views/Blocks'
 import { Sidebar } from './views/Sidebar'
@@ -149,6 +150,12 @@ export const Renderer: FC<RendererProps> = ({
   // floored to the frame height by min-h-full, so measuring it can't shrink short questions.)
   // Re-emits on question change, form start, and any reflow (fonts, wrapping options, validation).
   // Skipped when not embedded.
+  //
+  // We also answer a `REQUEST_RESIZE` ping from the parent by re-measuring on demand. The mount emit
+  // is one-shot, so on a hard refresh (where a cached iframe can boot and emit before the parent's
+  // message listener is attached) that first height can be missed and the frame stays stuck at its
+  // fallback height. The parent pings until it hears a height back, and this handler replies, which
+  // makes the handshake self-healing instead of dependent on who booted first.
   useEffect(() => {
     if (typeof window === 'undefined' || window.parent === window) return
 
@@ -171,11 +178,15 @@ export const Renderer: FC<RendererProps> = ({
       })
     }
 
+    function onParentMessage(e: MessageEvent) {
+      if (e.data?.source === 'COMHAIRLE' && e.data.eventName === 'REQUEST_RESIZE') {
+        emit()
+      }
+    }
+
     emit()
 
-    const wrapper = document.querySelector<HTMLElement>(
-      '.heyform-body-active .heyform-block-main'
-    )
+    const wrapper = document.querySelector<HTMLElement>('.heyform-body-active .heyform-block-main')
     const observer = new ResizeObserver(emit)
 
     if (wrapper) {
@@ -183,13 +194,30 @@ export const Renderer: FC<RendererProps> = ({
     }
 
     window.addEventListener('resize', emit)
+    window.addEventListener('message', onParentMessage)
 
     return () => {
       cancelAnimationFrame(frame)
       observer.disconnect()
       window.removeEventListener('resize', emit)
+      window.removeEventListener('message', onParentMessage)
     }
   }, [state.scrollIndex, state.isStarted])
+
+  // Tell an embedding parent when the active question changes so it can scroll the page back to the
+  // top; the iframe auto-sizes to each question, so after clicking Next the parent window would
+  // otherwise stay at the previous question's scroll offset. We compare against the previous index
+  // (rather than a "first run" flag) so a genuine navigation is the only trigger, even if the effect
+  // is invoked twice on mount under StrictMode.
+  const prevScrollIndex = useRef(state.scrollIndex)
+  useEffect(() => {
+    if (typeof window === 'undefined' || window.parent === window) return
+
+    if (prevScrollIndex.current === state.scrollIndex) return
+    prevScrollIndex.current = state.scrollIndex
+
+    sendStepChangeMessage()
+  }, [state.scrollIndex])
 
   if (!helper.isValidArray(form.fields)) {
     return <ClosedMessage form={form} />
