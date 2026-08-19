@@ -42,6 +42,25 @@ export interface RendererProps {
   onSubmit?: (values: Record<string, any>, isPartial?: boolean, stripe?: IStripe) => Promise<void>
 }
 
+// In-flow chrome that sits above `.heyform-block-main` inside the active question and so falls
+// outside the height we measure: the group header, and a non-inline media layout (h-64 below
+// 800px). An inline layout renders inside block-main and is already counted.
+const CHROME_ABOVE_MAIN = ['.heyform-block-group', '.heyform-block-scroll > .heyform-layout']
+
+// Margins included, and 0 when the element is out of the flow: above 800px both selectors above are
+// absolutely positioned and overlay the question rather than pushing it down.
+function inFlowHeight(el: HTMLElement) {
+  const style = window.getComputedStyle(el)
+
+  if (style.display === 'none' || style.position === 'absolute' || style.position === 'fixed') {
+    return 0
+  }
+
+  return (
+    el.offsetHeight + (parseFloat(style.marginTop) || 0) + (parseFloat(style.marginBottom) || 0)
+  )
+}
+
 function initStore(form: IFormModel, autoSave: boolean, allowPayment: boolean): IState {
   const locale = getPreferredLanguage({
     languages: FORM_LOCALES_OPTIONS.map(l => l.value),
@@ -143,11 +162,20 @@ export const Renderer: FC<RendererProps> = ({
   )
   const [state, dispatch] = useReducer(StoreReducer, memoState)
 
-  // Post the active question's content height out to an embedding parent, so a
-  // cross-origin iframe can size itself to the question and stop its footer overlapping long
-  // answers. We measure `.heyform-block-main` (the question's content box): its offsetHeight is the
-  // real content height, and its bottom margin keeps the pinned footer clear. (The scroll wrapper is
-  // floored to the frame height by min-h-full, so measuring it can't shrink short questions.)
+  // Post the height the active question needs out to an embedding parent, so a cross-origin iframe
+  // can size itself to the question instead of guessing. The parent can't measure us across
+  // origins, so we measure here and post it out.
+  //
+  // Base is `.heyform-block-main` (the question's content box), whose bottom margin also keeps the
+  // pinned footer clear. Not the scroll wrapper or container, even though those are what overflow:
+  // both are floored to the frame height (h-full / min-h-full), so measuring them would report the
+  // frame straight back and it could never shrink again for a short question.
+  //
+  // Plus the chrome above the wrapper that is in flow below 800px (group header, non-inline media
+  // layout at its mobile h-64). It sits outside block-main, and this document is `h-screen
+  // overflow-hidden` with `overflow-y: auto` inner containers below 800px, so a frame short by that
+  // much gives the embed a second scrollbar inside the frame rather than a taller page.
+  //
   // Re-emits on question change, form start, and any reflow (fonts, wrapping options, validation).
   // Skipped when not embedded.
   //
@@ -161,19 +189,36 @@ export const Renderer: FC<RendererProps> = ({
 
     let frame = 0
 
+    function activeElements() {
+      const body = document.querySelector<HTMLElement>('.heyform-body-active')
+
+      if (!body) {
+        return { main: null, chrome: [] as HTMLElement[] }
+      }
+
+      return {
+        main: body.querySelector<HTMLElement>('.heyform-block-main'),
+        chrome: CHROME_ABOVE_MAIN.flatMap(selector =>
+          Array.from(body.querySelectorAll<HTMLElement>(selector))
+        )
+      }
+    }
+
     function emit() {
       cancelAnimationFrame(frame)
       frame = requestAnimationFrame(() => {
-        const wrapper = document.querySelector<HTMLElement>(
-          '.heyform-body-active .heyform-block-main'
+        const { main, chrome } = activeElements()
+
+        if (!main) {
+          return
+        }
+
+        const height = Math.ceil(
+          main.offsetHeight + chrome.reduce((total, el) => total + inFlowHeight(el), 0)
         )
 
-        if (wrapper) {
-          const height = Math.ceil(wrapper.offsetHeight)
-
-          if (height > 0) {
-            sendResizeMessage(height)
-          }
+        if (height > 0) {
+          sendResizeMessage(height)
         }
       })
     }
@@ -186,12 +231,17 @@ export const Renderer: FC<RendererProps> = ({
 
     emit()
 
-    const wrapper = document.querySelector<HTMLElement>('.heyform-body-active .heyform-block-main')
+    const { main, chrome } = activeElements()
     const observer = new ResizeObserver(emit)
 
-    if (wrapper) {
-      observer.observe(wrapper)
+    if (main) {
+      observer.observe(main)
     }
+
+    // The chrome is observed too: a group header wrapping onto a second line, or a media layout
+    // settling once its image decodes, changes the height the frame needs without touching
+    // block-main, so block-main alone would never fire.
+    chrome.forEach(el => observer.observe(el))
 
     window.addEventListener('resize', emit)
     window.addEventListener('message', onParentMessage)
