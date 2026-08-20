@@ -1,5 +1,5 @@
 import type { FormTheme } from '@heyform-inc/shared-types-enums'
-import { alpha, helper, hexToRgb, isDarkColor } from '@heyform-inc/utils'
+import { alpha, helper, hexToRgb, isDarkColor, isHexColor } from '@heyform-inc/utils'
 
 export const DEFAULT_THEME: FormTheme = {
   fontFamily: 'Public Sans',
@@ -90,6 +90,54 @@ export function getTheme(theme?: FormTheme): FormTheme {
   return {
     ...DEFAULT_THEME,
     ...theme
+  }
+}
+
+/**
+ * Theme fields an embedding page may override on the form URL. The form renders in a cross-origin
+ * iframe, so its query string is the only channel a host has to hand us its colours: comhairle
+ * sends the tokens it resolved for the current viewer, which is how an embedded form follows the
+ * host's light/dark and per-conversation theme.
+ */
+const EMBED_THEME_COLOR_KEYS = [
+  'questionTextColor',
+  'answerTextColor',
+  'buttonBackground',
+  'buttonTextColor',
+  'backgroundColor'
+] as const
+
+/**
+ * A query string is attacker-controllable and these values are interpolated into a <style> tag, so
+ * anything that is not a plain hex colour is dropped rather than escaped: `#fff;} html {` would
+ * otherwise be a CSS injection into the form. The font goes through the same allowlist that decides
+ * which webfonts we are willing to load at all.
+ *
+ * Returns a new theme; the caller keeps the form's own value for every slot the URL did not set.
+ */
+export function applyEmbedTheme(theme: FormTheme, query?: Record<string, any>): FormTheme {
+  if (helper.isEmpty(query)) {
+    return theme
+  }
+
+  const overrides: FormTheme = {}
+
+  for (const key of EMBED_THEME_COLOR_KEYS) {
+    const value = query![key]
+
+    // Bare hex is accepted alongside `#rrggbb` so hosts can skip percent-encoding the `#`.
+    if (helper.isString(value) && isHexColor(value)) {
+      overrides[key] = value.startsWith('#') ? value : `#${value}`
+    }
+  }
+
+  if (GOOGLE_FONTS.includes(query!.fontFamily)) {
+    overrides.fontFamily = query!.fontFamily
+  }
+
+  return {
+    ...theme,
+    ...overrides
   }
 }
 

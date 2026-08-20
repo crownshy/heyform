@@ -3,7 +3,12 @@ import { helper } from '@heyform-inc/utils'
 import { FC, useEffect, useRef } from 'react'
 
 import { GOOGLE_RECAPTCHA_KEY } from '@/consts'
-import { getTheme, getThemeStyle, getWebFontURL } from '@/pages/form/views/FormComponents'
+import {
+  applyEmbedTheme,
+  getTheme,
+  getThemeStyle,
+  getWebFontURL
+} from '@/pages/form/views/FormComponents'
 
 import { isStripeEnabled } from './utils/payment'
 
@@ -73,7 +78,8 @@ const FacebookPixel: FC<{ trackCode: string }> = ({ trackCode }) => {
 
 export const CustomCode = ({ form, query }: { form: FormModel; query: Record<string, any> }) => {
   const { integrations } = form
-  const theme = getTheme(form.themeSettings?.theme)
+  // Before the font URL, since an embedding host can override the family from the query string.
+  const theme = applyEmbedTheme(getTheme(form.themeSettings?.theme), query)
   const fontURL = getWebFontURL(theme.fontFamily)
 
   useEffect(() => {
