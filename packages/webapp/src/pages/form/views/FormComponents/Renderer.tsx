@@ -266,8 +266,12 @@ export const Renderer: FC<RendererProps> = ({
     if (prevScrollIndex.current === state.scrollIndex) return
     prevScrollIndex.current = state.scrollIndex
 
-    sendStepChangeMessage()
-  }, [state.scrollIndex])
+    sendStepChangeMessage({
+      index: state.scrollIndex ?? 0,
+      total: state.fields.length,
+      percentage: state.percentage
+    })
+  }, [state.scrollIndex, state.fields.length, state.percentage])
 
   if (!helper.isValidArray(form.fields)) {
     return <ClosedMessage form={form} />

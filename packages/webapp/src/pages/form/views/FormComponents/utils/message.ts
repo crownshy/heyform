@@ -23,13 +23,23 @@ export function sendResizeMessage(height: number) {
 }
 
 // Tell an embedding parent that a new question became active, so it can scroll the page back to the
-// top. The iframe auto-sizes to each question, so the parent window (not the iframe) is what scrolls;
-// without this it would stay at the previous question's scroll offset after advancing.
-export function sendStepChangeMessage() {
+// top and move its own progress indicator. The iframe auto-sizes to each question, so the parent
+// window (not the iframe) is what scrolls; without this it would stay at the previous question's
+// scroll offset after advancing.
+//
+// `index` and `total` are the position in the logic-applied field list (thank-you screen included),
+// so `index / total` is how far through the form the participant is. `percentage` is the form's own
+// answered-questions figure, the one the in-form progress bar shows.
+export function sendStepChangeMessage(progress: {
+  index: number
+  total: number
+  percentage: number
+}) {
   window.parent?.postMessage(
     {
       source: 'HEYFORM',
-      eventName: 'FORM_STEP_CHANGE'
+      eventName: 'FORM_STEP_CHANGE',
+      ...progress
     },
     '*'
   )
