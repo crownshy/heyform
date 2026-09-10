@@ -1,6 +1,6 @@
 import { CaptchaKindEnum, FormModel } from '@heyform-inc/shared-types-enums'
 import { helper } from '@heyform-inc/utils'
-import { FC, useEffect, useRef } from 'react'
+import { FC, useEffect, useMemo, useRef, useState } from 'react'
 
 import { GOOGLE_RECAPTCHA_KEY } from '@/consts'
 import { getTheme, getThemeStyle, getWebFontURL } from '@/pages/form/views/FormComponents'
@@ -76,6 +76,42 @@ export const CustomCode = ({ form, query }: { form: FormModel; query: Record<str
   const theme = getTheme(form.themeSettings?.theme)
   const fontURL = getWebFontURL(theme.fontFamily)
 
+  /**
+   * Theme colours the embedding page sends after load. The URL params it opened us with already
+   * cover the first paint; this covers the viewer flipping light / dark mid-form, where reloading
+   * the iframe with new params would throw away everything they have typed.
+   *
+   * Merged over `query` rather than replacing it, so the params we booted with still apply to any
+   * colour a later message leaves out.
+   *
+   * The payload is not trusted: every value goes through getThemeStyle's hex check, same as a URL
+   * param does. Nor is the origin checked, matching the REQUEST_RESIZE handler in Renderer: a page
+   * that can embed us can already pass whatever it likes in the URL, so recolouring is not a
+   * capability this hands out.
+   */
+  const [themeOverride, setThemeOverride] = useState<Record<string, string>>({})
+  const themeQuery = useMemo(() => ({ ...query, ...themeOverride }), [query, themeOverride])
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || window.parent === window) {
+      return
+    }
+
+    function onParentMessage(e: MessageEvent) {
+      if (e.data?.source !== 'COMHAIRLE' || e.data.eventName !== 'SET_THEME') {
+        return
+      }
+
+      if (helper.isValid(e.data.theme)) {
+        setThemeOverride(current => ({ ...current, ...e.data.theme }))
+      }
+    }
+
+    window.addEventListener('message', onParentMessage)
+
+    return () => window.removeEventListener('message', onParentMessage)
+  }, [])
+
   useEffect(() => {
     document.title = form.name ? `${form.name} - HeyForm` : 'HeyForm'
   }, [form.name])
@@ -83,7 +119,7 @@ export const CustomCode = ({ form, query }: { form: FormModel; query: Record<str
   return (
     <>
       <link href={fontURL} rel="stylesheet" />
-      <style dangerouslySetInnerHTML={{ __html: getThemeStyle(theme, query) }} />
+      <style dangerouslySetInnerHTML={{ __html: getThemeStyle(theme, themeQuery) }} />
       {helper.isValid(form.themeSettings?.theme?.customCSS) && (
         <style dangerouslySetInnerHTML={{ __html: form.themeSettings!.theme!.customCSS! }} />
       )}

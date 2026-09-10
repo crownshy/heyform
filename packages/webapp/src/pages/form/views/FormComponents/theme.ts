@@ -1,5 +1,5 @@
 import type { FormTheme } from '@heyform-inc/shared-types-enums'
-import { alpha, helper, hexToRgb, isDarkColor } from '@heyform-inc/utils'
+import { alpha, helper, hexToRgb, isDarkColor, isHexColor } from '@heyform-inc/utils'
 
 export const DEFAULT_THEME: FormTheme = {
   fontFamily: 'Public Sans',
@@ -101,11 +101,67 @@ function getAdaptedColor(color: string, alphaNum = 0.5, step = 20): string {
   return `rgba(${red}, ${green}, ${blue}, ${alphaNum})`
 }
 
-export function getThemeStyle(theme: FormTheme, query?: Record<string, any>): string {
-  if (helper.isTrue(query?.transparentBackground)) {
-    theme.backgroundColor = 'transparent'
-    theme.backgroundImage = undefined
+/**
+ * Theme colours an embedding page may set per request, either as query params on the form URL or in
+ * a SET_THEME message (see CustomCode). The keys are the FormTheme field names.
+ *
+ * A form carries one stored set of colours, decided once by whoever built it. That is wrong for an
+ * embed whose host themes itself per viewer: Comhairle renders us in a cross-origin iframe and
+ * switches between light and dark (and between per-deployment palettes) on the viewer's machine,
+ * none of which we can see from in here. Without this the form stays whatever the form owner picked
+ * and reads as a white slab on a dark page.
+ */
+const OVERRIDABLE_COLORS = [
+  'questionTextColor',
+  'answerTextColor',
+  'buttonBackground',
+  'buttonTextColor',
+  'backgroundColor'
+] as const
+
+/**
+ * Hex in, hex out, `#` optional so a caller does not have to percent-encode it into a URL. Anything
+ * that is not a hex colour is dropped rather than passed through: these values are interpolated into
+ * a <style> tag, so a looser check is a CSS injection.
+ */
+function hexFromQuery(value: unknown): string | undefined {
+  if (!helper.isString(value)) {
+    return undefined
   }
+
+  const hex = (value as string).startsWith('#') ? (value as string) : `#${value}`
+
+  return isHexColor(hex) ? hex : undefined
+}
+
+function applyThemeQuery(theme: FormTheme, query?: Record<string, any>): FormTheme {
+  const applied: FormTheme = { ...theme }
+
+  if (helper.isTrue(query?.transparentBackground)) {
+    applied.backgroundColor = 'transparent'
+    applied.backgroundImage = undefined
+  }
+
+  for (const key of OVERRIDABLE_COLORS) {
+    const hex = hexFromQuery(query?.[key])
+
+    if (hex) {
+      applied[key] = hex
+    }
+  }
+
+  if (hexFromQuery(query?.backgroundColor)) {
+    // The image paints over the colour we were just handed, and the brightness veil is tuned to that
+    // image, so a caller asking for a background colour has to win over both.
+    applied.backgroundImage = undefined
+    applied.backgroundBrightness = undefined
+  }
+
+  return applied
+}
+
+export function getThemeStyle(rawTheme: FormTheme, query?: Record<string, any>): string {
+  const theme = applyThemeQuery(rawTheme, query)
 
   return `
   html {
