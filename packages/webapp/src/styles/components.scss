@@ -319,6 +319,42 @@
   }
 }
 
+// Set when the embedding page sizes the iframe to the height we post and scrolls its own page
+// (`?hostScroll=true`, sent by comhairle). Nothing in this document may scroll then: on a phone a
+// swipe that starts on the frame goes to the innermost scroller first and does not carry on to the
+// page when that one runs out, so every inner scroller is one more scroll to get past.
+//
+// The rules above floor the blocks to the frame height (h-full) and hand overflow to
+// `overflow-y: auto` below 800px. Here the question lays out at its natural height instead, which
+// is the height Renderer measures and posts, so the frame fits it and nothing is left to scroll.
+// Content past the frame is clipped for the moment before a new height lands.
+.heyform-host-scroll {
+  .heyform-block-container {
+    position: relative;
+    height: auto;
+    overflow: hidden;
+  }
+
+  .heyform-block {
+    position: relative;
+    inset: auto;
+    height: auto;
+  }
+
+  .heyform-block-scroll,
+  .heyform-scroll-wrapper {
+    height: auto;
+  }
+
+  .heyform-scroll-wrapper {
+    overflow-y: hidden;
+  }
+
+  .heyform-scroll-container {
+    min-height: 0;
+  }
+}
+
 .heyform-block-previous {
   .heyform-scroll-wrapper {
     opacity: 0;

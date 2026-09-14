@@ -130,6 +130,7 @@ export const Renderer: FC<RendererProps> = ({
   onSubmit
 }) => {
   const query = useQuery()
+  const isHostScroll = query.hostScroll === 'true'
   const [isAndroid, setAndroid] = useState(false)
 
   useEffect(() => {
@@ -166,15 +167,16 @@ export const Renderer: FC<RendererProps> = ({
   // can size itself to the question instead of guessing. The parent can't measure us across
   // origins, so we measure here and post it out.
   //
-  // Base is `.heyform-block-main` (the question's content box), whose bottom margin also keeps the
-  // pinned footer clear. Not the scroll wrapper or container, even though those are what overflow:
-  // both are floored to the frame height (h-full / min-h-full), so measuring them would report the
-  // frame straight back and it could never shrink again for a short question.
+  // With `?hostScroll=true` (see `.heyform-host-scroll`) the question lays out at its natural
+  // height, so `.heyform-block-container` holds all of it: group header, media, content, and the
+  // bottom margin that keeps the pinned footer clear. We measure that box. The welcome and thank-you
+  // screens have no active question, so they fall back to the only container on the page.
   //
-  // Plus the chrome above the wrapper that is in flow below 800px (group header, non-inline media
-  // layout at its mobile h-64). It sits outside block-main, and this document is `h-screen
-  // overflow-hidden` with `overflow-y: auto` inner containers below 800px, so a frame short by that
-  // much gives the embed a second scrollbar inside the frame rather than a taller page.
+  // Without the param the blocks are floored to the frame height (h-full / min-h-full), so measuring
+  // the container would report the frame straight back and it could never shrink again. That path
+  // measures `.heyform-block-main` (the question's content box) plus the chrome above it that is in
+  // flow below 800px (group header, non-inline media layout at its mobile h-64). It stays only for
+  // comhairle builds that predate the param.
   //
   // Re-emits on question change, form start, and any reflow (fonts, wrapping options, validation).
   // Skipped when not embedded.
@@ -190,6 +192,14 @@ export const Renderer: FC<RendererProps> = ({
     let frame = 0
 
     function activeElements() {
+      if (isHostScroll) {
+        const container =
+          document.querySelector<HTMLElement>('.heyform-body-active .heyform-block-container') ??
+          document.querySelector<HTMLElement>('.heyform-block-container')
+
+        return { main: container, chrome: [] as HTMLElement[] }
+      }
+
       const body = document.querySelector<HTMLElement>('.heyform-body-active')
 
       if (!body) {
@@ -252,7 +262,7 @@ export const Renderer: FC<RendererProps> = ({
       window.removeEventListener('resize', emit)
       window.removeEventListener('message', onParentMessage)
     }
-  }, [state.scrollIndex, state.isStarted])
+  }, [isHostScroll, state.scrollIndex, state.isStarted, state.isSubmitted])
 
   // Tell an embedding parent when the active question changes so it can scroll the page back to the
   // top; the iframe auto-sizes to each question, so after clicking Next the parent window would
@@ -309,7 +319,8 @@ export const Renderer: FC<RendererProps> = ({
           'heyform-root',
           {
             'heyform-root-open': state.isSidebarOpen,
-            'heyform-root-android': isAndroid
+            'heyform-root-android': isAndroid,
+            'heyform-host-scroll': isHostScroll
           },
           className
         )}
