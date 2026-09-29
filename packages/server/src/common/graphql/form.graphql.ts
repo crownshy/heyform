@@ -1023,7 +1023,7 @@ class FormReportAnswerType {
   @Field()
   kind: string
 
-  @Field(type => GraphQLJSON)
+  @Field(type => GraphQLJSON, { nullable: true })
   value: any
 
   @Field()
