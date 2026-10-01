@@ -9,10 +9,18 @@ import tr from './tr'
 import zhCn from './zh-cn'
 import zhTw from './zh-tw'
 import cs from './cs'
+import faAf from './fa-af'
+import psAf from './ps-af'
 
 export default {
   en: {
     translation: en
+  },
+  'fa-af': {
+    translation: faAf
+  },
+  'ps-af': {
+    translation: psAf
   },
   fr: {
     translation: fr

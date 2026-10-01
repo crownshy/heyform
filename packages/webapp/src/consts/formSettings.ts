@@ -29,6 +29,14 @@ export const LOCALES_OPTIONS = [
 	{
 		label: '繁体中文',
 		value: 'zh-tw'
+	},
+	{
+		label: 'دری',
+		value: 'fa-af'
+	},
+	{
+		label: 'پښتو',
+		value: 'ps-af'
 	}
 ]
 
@@ -68,6 +76,14 @@ export const FORM_LOCALES_OPTIONS = [
 	{
 		label: 'Spanish',
 		value: 'es'
+	},
+	{
+		label: 'Dari',
+		value: 'fa-af'
+	},
+	{
+		label: 'Pashto',
+		value: 'ps-af'
 	}
 ]
 

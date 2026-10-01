@@ -13,12 +13,26 @@ import tr from './tr'
 import zhCn from './zhCn'
 import zhTw from './zhTw'
 import cs from './cs'
+import faAf from './faAf'
+import psAf from './psAf'
 
 const resources = {
   'ar-sy':{
     translation: {
       ...arSy,
       ...locales.en.translation
+    }
+  },
+  'fa-af': {
+    translation: {
+      ...faAf,
+      ...locales['fa-af'].translation
+    }
+  },
+  'ps-af': {
+    translation: {
+      ...psAf,
+      ...locales['ps-af'].translation
     }
   },
   en: {
