@@ -10,10 +10,18 @@ import zhTw from './zh-tw'
 import es from './es'
 import ptBr from './pt-br'
 import cs from './cs'
+import faAf from './faAf'
+import psAf from './psAf'
 
 export const locales: Record<string, any> = {
 	'ar-sy': {
 		translation: arSy
+	},
+	'fa-af': {
+		translation: faAf
+	},
+	'ps-af': {
+		translation: psAf
 	},
 	en: {
 		translation: en
