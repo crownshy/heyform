@@ -24,7 +24,10 @@ const LANGUAGES = {
 	tr: 'Turkish',
 	es: 'Spanish',
 	'zh-cn': 'Simplified Chinese',
-	'zh-tw': 'Traditional Chinese'
+	'zh-tw': 'Traditional Chinese',
+	'ar-sy': 'Arabic',
+	'fa-af': 'Dari',
+	'ps-af': 'Pashto'
 }
 
 @Processor('TranslateFormQueue')
