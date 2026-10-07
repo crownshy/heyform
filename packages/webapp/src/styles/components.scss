@@ -447,9 +447,10 @@
   &::before {
     content: attr(data-tooltip);
     @apply invisible absolute z-10 rounded-md px-3 py-2 text-sm font-normal normal-case leading-snug opacity-0;
-    left: 50%;
+    // Anchored to the term's left edge, not centred: the builder canvas clips
+    // overflow, so a centred bubble on a term near the edge gets cut off.
+    left: 0;
     bottom: calc(100% + 8px);
-    transform: translateX(-50%);
     width: max-content;
     max-width: 16rem;
     white-space: normal;
