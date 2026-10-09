@@ -61,11 +61,22 @@ function inFlowHeight(el: HTMLElement) {
   )
 }
 
-function initStore(form: IFormModel, autoSave: boolean, allowPayment: boolean): IState {
-  const locale = getPreferredLanguage({
-    languages: FORM_LOCALES_OPTIONS.map(l => l.value),
-    fallback: form.settings?.locale || 'en'
-  })
+function initStore(
+  form: IFormModel,
+  autoSave: boolean,
+  allowPayment: boolean,
+  localeOverride?: string
+): IState {
+  const supportedLocales = FORM_LOCALES_OPTIONS.map(l => l.value)
+  const normalizedOverride = localeOverride?.toLowerCase()
+  const matchedOverride = supportedLocales.find(l => l.toLowerCase() === normalizedOverride)
+
+  const locale =
+    matchedOverride ||
+    getPreferredLanguage({
+      languages: supportedLocales,
+      fallback: form.settings?.locale || 'en'
+    })
   const list = parseFields(form.fields, form.translations?.[locale])
 
   const welcomeField = list.find(f => f.kind === FieldKindEnum.WELCOME)
@@ -147,7 +158,7 @@ export const Renderer: FC<RendererProps> = ({
       customUrlRedirects,
       alwaysShowNextButton,
       onSubmit,
-      ...initStore(form, autoSave, allowPayment),
+      ...initStore(form, autoSave, allowPayment, query.locale as string),
       query
     }),
     [
