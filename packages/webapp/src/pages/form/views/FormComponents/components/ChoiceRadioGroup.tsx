@@ -8,6 +8,7 @@ import { useTranslation } from '@/pages/form/views/FormComponents'
 
 import type { ChoiceRadioOption } from './ChoiceRadio'
 import { ChoiceRadio } from './ChoiceRadio'
+import { groupRole, moveOptionFocus, optionRole, optionTabIndex } from './optionKeyboard'
 
 interface ChoiceRadioGroupProps extends Omit<IComponentProps, 'onChange'> {
   options: ChoiceRadioOption[]
@@ -46,6 +47,7 @@ export const ChoiceRadioGroup: FC<ChoiceRadioGroupProps> = ({
     [allowOther, max, values.length]
   )
   const [isOtherSelected, setIsOtherSelected] = useState(false)
+  const checkedIndex = options.findIndex(option => values.includes(option.value))
 
   const handleClick = useCallback(
     (value: any) => {
@@ -110,15 +112,19 @@ export const ChoiceRadioGroup: FC<ChoiceRadioGroupProps> = ({
         },
         className
       )}
+      role={groupRole(allowMultiple)}
+      onKeyDown={moveOptionFocus}
       {...restProps}
     >
-      {options.map(option => (
+      {options.map((option, index) => (
         <ChoiceRadio
           key={option.value as string}
           {...option}
           enableImage={enableImage}
           isHotkeyShow={isHotkeyShow}
           isChecked={values.includes(option.value)}
+          role={optionRole(allowMultiple)}
+          tabIndex={optionTabIndex(allowMultiple, index, checkedIndex)}
           onClick={handleClick}
         />
       ))}
@@ -133,6 +139,8 @@ export const ChoiceRadioGroup: FC<ChoiceRadioGroupProps> = ({
           isHotkeyShow={isHotkeyShow}
           isChecked={isOtherSelected}
           isOther={true}
+          role={optionRole(allowMultiple)}
+          tabIndex={optionTabIndex(allowMultiple, options.length, checkedIndex)}
           onClick={handleOtherClick}
           onChange={handleOtherChange}
         />
