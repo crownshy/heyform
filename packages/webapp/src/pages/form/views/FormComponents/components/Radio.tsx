@@ -1,10 +1,12 @@
 import { helper } from '@heyform-inc/utils'
 import { IconCheck, IconPhoto } from '@tabler/icons-react'
 import clsx from 'clsx'
-import type { FC, ReactNode } from 'react'
+import type { FC, KeyboardEvent, ReactNode } from 'react'
 
 import type { IComponentProps } from '@/components/ui/typing'
 import { useKey } from '@/utils'
+
+import { selectOnSpace } from './optionKeyboard'
 
 export interface RadioOption {
   keyName?: string
@@ -19,6 +21,8 @@ export interface RadioOption {
 interface RadioProps extends RadioOption, Omit<IComponentProps, 'onClick'> {
   isChecked?: boolean
   isHotkeyShow?: boolean
+  role?: 'radio' | 'checkbox'
+  tabIndex?: number
   onClick?: (value: any) => void
 }
 
@@ -33,6 +37,8 @@ export const Radio: FC<RadioProps> = ({
   isHotkeyShow,
   disabled,
   isChecked,
+  role = 'radio',
+  tabIndex,
   onClick,
   ...restProps
 }) => {
@@ -54,6 +60,12 @@ export const Radio: FC<RadioProps> = ({
         className
       )}
       onClick={handleClick}
+      role={role}
+      tabIndex={tabIndex}
+      aria-checked={!!isChecked}
+      aria-disabled={disabled || undefined}
+      aria-keyshortcuts={keyName && isHotkeyShow ? keyName : undefined}
+      onKeyDown={(event: KeyboardEvent<HTMLDivElement>) => selectOnSpace(event, handleClick)}
       {...restProps}
     >
       <div className="heyform-radio-container">
@@ -72,7 +84,7 @@ export const Radio: FC<RadioProps> = ({
           {keyName && isHotkeyShow && <div className="heyform-radio-hotkey">{keyName}</div>}
           <div className="heyform-radio-label">{label}</div>
         </div>
-        <div className="heyform-radio-icon">
+        <div className="heyform-radio-icon" aria-hidden="true">
           <IconCheck />
         </div>
       </div>
