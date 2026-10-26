@@ -47,6 +47,7 @@ const Integration = lazy(() => import('@/pages/form/Integration'))
 const Analytics = lazy(() => import('@/pages/form/Analytics'))
 const Submissions = lazy(() => import('@/pages/form/Submissions'))
 const FormSettings = lazy(() => import('@/pages/form/FormSettings'))
+const FormTranslations = lazy(() => import('@/pages/form/Translations'))
 const FormRender = lazy(() => import('@/pages/form/Render'))
 
 const config: CustomRouteConfig[] = [
@@ -196,6 +197,11 @@ const config: CustomRouteConfig[] = [
     path: '/workspace/:workspaceId/project/:projectId/form/:formId/settings',
     layout: FormLayout,
     component: FormSettings
+  },
+  {
+    path: '/workspace/:workspaceId/project/:projectId/form/:formId/translations',
+    layout: FormLayout,
+    component: FormTranslations
   }
 ]
 

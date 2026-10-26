@@ -534,6 +534,15 @@ export class UpdateFormVariablesInput extends FormDetailInput {
 }
 
 @InputType()
+export class UpdateFormTranslationsInput extends FormDetailInput {
+  @Field()
+  language: string
+
+  @Field(type => GraphQLJSONObject)
+  translations: Record<string, any>
+}
+
+@InputType()
 export class UpdateFormSchemasInput extends FormDetailInput {
   @Field(type => [FormFieldInput])
   @IsArray()
@@ -947,13 +956,13 @@ export class FormType {
 
   @Field({ nullable: true })
   status?: number
+
+  @Field(type => GraphQLJSONObject, { nullable: true })
+  translations?: FormModel['translations']
 }
 
 @ObjectType()
 export class PublicFormType extends FormType {
-  @Field(type => GraphQLJSONObject, { nullable: true })
-  translations: FormModel['translations']
-
   @Field(type => GraphQLJSONObject, { nullable: true })
   integrations?: Record<string, string>
 }

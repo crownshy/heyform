@@ -446,6 +446,7 @@ export const FORM_DETAIL_GQL = gql`
       suspended
       draft
       status
+      translations
     }
   }
 `
@@ -495,6 +496,12 @@ export const UPDATE_FORM_LOGICS = gql`
 export const UPDATE_FORM_VARIABLES = gql`
   mutation ($input: UpdateFormVariablesInput!) {
     updateFormVariables(input: $input)
+  }
+`
+
+export const UPDATE_FORM_TRANSLATIONS_GQL = gql`
+  mutation ($input: UpdateFormTranslationsInput!) {
+    updateFormTranslations(input: $input)
   }
 `
 

@@ -318,6 +318,22 @@ export class FormService {
     return masked
   }
 
+  public async updateTranslations(
+    formId: string,
+    language: string,
+    translations: Record<string, any>
+  ): Promise<boolean> {
+    const form = await this.findById(formId)
+    const existing = mapToObject(form?.translations)?.[language] || {}
+
+    return this.update(formId, {
+      [`translations.${language}`]: {
+        ...existing,
+        ...translations
+      }
+    })
+  }
+
   public addTranslateQueue(formId: string, languages: string[]) {
     languages.forEach(language => {
       this.translateFormQueue.add({

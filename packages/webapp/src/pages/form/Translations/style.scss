@@ -1,0 +1,33 @@
+.translation-field {
+  padding: 16px;
+  border: 1px solid theme('colors.slate.200');
+  border-radius: 8px;
+
+  & + & {
+    margin-top: 16px;
+  }
+
+  .translation-field-original {
+    margin-bottom: 4px;
+    font-size: 13px;
+    color: theme('colors.slate.400');
+  }
+
+  > .input,
+  > .textarea {
+    margin-bottom: 16px;
+  }
+
+  .translation-field-choices {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  .translation-field-choice {
+    .translation-field-original {
+      margin-bottom: 2px;
+    }
+  }
+}

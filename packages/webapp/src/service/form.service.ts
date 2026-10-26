@@ -39,6 +39,7 @@ import {
   UPDATE_FORM_LOGICS,
   UPDATE_FORM_SCHEMAS_GQL,
   UPDATE_FORM_THEME_GQL,
+  UPDATE_FORM_TRANSLATIONS_GQL,
   UPDATE_FORM_VARIABLES,
   VERIFY_FORM_PASSWORD_GQL
 } from '@/consts'
@@ -175,6 +176,19 @@ export class FormService {
         input: {
           formId,
           ...updates
+        }
+      }
+    })
+  }
+
+  static updateTranslations(formId: string, language: string, translations: IMapType) {
+    return request.mutate({
+      mutation: UPDATE_FORM_TRANSLATIONS_GQL,
+      variables: {
+        input: {
+          formId,
+          language,
+          translations
         }
       }
     })
