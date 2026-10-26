@@ -4,6 +4,7 @@ import { Auth, FormGuard } from '@decorator'
 import { FormDetailInput, FormType, PublicFormType } from '@graphql'
 import { FormModel } from '@model'
 import { AppService, FormService, IntegrationService } from '@service'
+import { mapToObject } from '@utils'
 
 @Resolver()
 export class FormDetailResolver {
@@ -17,7 +18,12 @@ export class FormDetailResolver {
   @FormGuard()
   @Auth()
   async formDetail(@Args('input') input: FormDetailInput): Promise<FormModel> {
-    return this.formService.findById(input.formId)
+    const form = await this.formService.findById(input.formId)
+
+    return {
+      ...form?.toObject({ virtuals: true }),
+      translations: mapToObject(form?.translations)
+    } as FormModel
   }
 
   @Query(returns => PublicFormType)

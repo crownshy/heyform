@@ -1,4 +1,11 @@
-import { IconBolt, IconChartBar, IconDatabase, IconEdit, IconSettings } from '@tabler/icons-react'
+import {
+	IconBolt,
+	IconChartBar,
+	IconDatabase,
+	IconEdit,
+	IconLanguage,
+	IconSettings
+} from '@tabler/icons-react'
 import { useTranslation } from 'react-i18next'
 import { NavLink } from 'react-router-dom'
 
@@ -28,6 +35,11 @@ export const Navigation = () => {
 			to: `/workspace/${workspaceId}/project/${projectId}/form/${formId}/submissions`,
 			label: t('form.submissions'),
 			icon: IconDatabase
+		},
+		{
+			to: `/workspace/${workspaceId}/project/${projectId}/form/${formId}/translations`,
+			label: t('form.translations'),
+			icon: IconLanguage
 		},
 		{
 			to: `/workspace/${workspaceId}/project/${projectId}/form/${formId}/settings`,

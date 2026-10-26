@@ -296,6 +296,7 @@ export default {
     share: 'Share',
     results: 'Results',
     settings: 'Settings',
+    translations: 'Translations',
     published: 'Published',
     analytics: 'Analytics',
     submissions: 'Submissions',
@@ -419,6 +420,11 @@ export default {
   formSettings: {
     Form: 'Form settings',
     subTitle: 'Manage your form settings',
+    translationsSubTitle:
+      'Review and override the automatically generated translations for the selected language.',
+    translationsEmptyTitle: 'No translation languages enabled',
+    translationsEmptyDescription:
+      'Enable one or more languages under Settings to generate translations you can override here.',
     Extra: 'Extra',
     subArchive: 'Submission archive',
     archiveText:
