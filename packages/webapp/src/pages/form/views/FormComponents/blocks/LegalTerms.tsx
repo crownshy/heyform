@@ -4,7 +4,7 @@ import { FormField, RadioGroup } from '../components'
 import { useStore } from '../store'
 import { useTranslation } from '../utils'
 import type { BlockProps } from './Block'
-import { Block } from './Block'
+import { Block, blockTitleId } from './Block'
 import { Form } from './Form'
 
 export const LegalTerms: FC<BlockProps> = ({ field, ...restProps }) => {
@@ -48,7 +48,7 @@ export const LegalTerms: FC<BlockProps> = ({ field, ...restProps }) => {
             }
           ]}
         >
-          <RadioGroup className="w-56" options={options} />
+          <RadioGroup aria-labelledby={blockTitleId(field)} className="w-56" options={options} />
         </FormField>
       </Form>
     </Block>

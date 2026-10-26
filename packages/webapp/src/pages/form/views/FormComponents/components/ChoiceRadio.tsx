@@ -1,13 +1,14 @@
 import { helper } from '@heyform-inc/utils'
 import { IconCheck, IconPhoto } from '@tabler/icons-react'
 import clsx from 'clsx'
-import { FC, ReactNode, useCallback, useMemo } from 'react'
+import { FC, KeyboardEvent, ReactNode, useCallback, useMemo } from 'react'
 
 import { Input, stopEvent } from '@/components/ui'
 import type { IComponentProps } from '@/components/ui/typing'
 import { useKey } from '@/utils'
 
 import { useTranslation } from '../utils'
+import { selectOnSpace } from './optionKeyboard'
 
 export interface ChoiceRadioOption {
   keyName?: string
@@ -23,6 +24,8 @@ interface ChoiceRadioProps extends ChoiceRadioOption, Omit<IComponentProps, 'onC
   isChecked?: boolean
   isOther?: boolean
   isHotkeyShow?: boolean
+  role?: 'radio' | 'checkbox'
+  tabIndex?: number
   onClick?: (value: any) => void
   onChange?: (value: any) => void
 }
@@ -39,6 +42,8 @@ export const ChoiceRadio: FC<ChoiceRadioProps> = ({
   disabled,
   isChecked,
   isOther,
+  role = 'radio',
+  tabIndex,
   onClick,
   onChange,
   ...restProps
@@ -73,6 +78,7 @@ export const ChoiceRadio: FC<ChoiceRadioProps> = ({
         <Input
           value={value}
           placeholder={t('Type your answer')}
+          aria-label={t('Other')}
           autoFocus={true}
           onClick={stopEvent}
           onChange={handleInputChange}
@@ -85,6 +91,20 @@ export const ChoiceRadio: FC<ChoiceRadioProps> = ({
 
   useKey(keyName?.toLowerCase() as string, handleClick)
 
+  // While "Other" shows its text box, the card stops being a radio: a radio's children are
+  // hidden from screen readers, which would hide the box. The box is labelled "Other" instead.
+  const isEditingOther = isOther && isChecked
+  const optionProps = isEditingOther
+    ? {}
+    : {
+        role,
+        tabIndex,
+        'aria-checked': !!isChecked,
+        'aria-disabled': disabled || undefined,
+        'aria-keyshortcuts': keyName && isHotkeyShow ? keyName : undefined,
+        onKeyDown: (event: KeyboardEvent<HTMLDivElement>) => selectOnSpace(event, handleClick)
+      }
+
   return (
     <div
       className={clsx(
@@ -95,6 +115,7 @@ export const ChoiceRadio: FC<ChoiceRadioProps> = ({
         className
       )}
       onClick={handleClick}
+      {...optionProps}
       {...restProps}
     >
       <div className="heyform-radio-container">
@@ -113,7 +134,7 @@ export const ChoiceRadio: FC<ChoiceRadioProps> = ({
           {keyName && isHotkeyShow && <div className="heyform-radio-hotkey">{keyName}</div>}
           <div className="heyform-radio-label">{labelChildren}</div>
         </div>
-        <div className="heyform-radio-icon">
+        <div className="heyform-radio-icon" aria-hidden="true">
           <IconCheck />
         </div>
       </div>
