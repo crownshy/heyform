@@ -41,11 +41,13 @@ export const ChoiceRadioGroup: FC<ChoiceRadioGroupProps> = ({
   const values = useMemo(() => resetArray(rawValue?.value || []), [rawValue])
   const otherValue = useMemo(() => rawValue?.other, [rawValue])
 
+  const [isOtherSelected, setIsOtherSelected] = useState(() => helper.isValid(rawValue?.other))
+
+  // "Other" only uses up one of the allowed choices once the respondent actually picks it.
   const isDisabled = useMemo(
-    () => max > 0 && values.length + (allowOther ? 1 : 0) >= max,
-    [allowOther, max, values.length]
+    () => max > 0 && values.length + (allowOther && isOtherSelected ? 1 : 0) >= max,
+    [allowOther, isOtherSelected, max, values.length]
   )
-  const [isOtherSelected, setIsOtherSelected] = useState(false)
 
   const handleClick = useCallback(
     (value: any) => {
@@ -85,6 +87,10 @@ export const ChoiceRadioGroup: FC<ChoiceRadioGroupProps> = ({
   )
 
   const handleOtherClick = useCallback(() => {
+    if (!isOtherSelected && allowMultiple && isDisabled) {
+      return
+    }
+
     setIsOtherSelected(!isOtherSelected)
 
     // Always update the form value when other is clicked to ensure proper tracking
@@ -99,7 +105,7 @@ export const ChoiceRadioGroup: FC<ChoiceRadioGroupProps> = ({
       const newValue = { value: values }
       onChange?.(newValue)
     }
-  }, [isOtherSelected, allowMultiple, values, otherValue])
+  }, [isOtherSelected, allowMultiple, isDisabled, values, otherValue])
 
   return (
     <div
