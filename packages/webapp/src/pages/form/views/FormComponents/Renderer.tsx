@@ -16,7 +16,7 @@ import { useQuery } from '@/utils'
 
 import { ClosedMessage } from './blocks/ClosedMessage'
 import type { IState, IStripe } from './store'
-import { StoreContext, StoreReducer, getStorage } from './store'
+import { StoreContext, StoreReducer, getStorage, getStoredFieldId } from './store'
 import { getTheme } from './theme'
 import type { IFormModel } from './typings'
 import {
@@ -105,6 +105,13 @@ function initStore(
   const questionCount = fields.filter(f => QUESTION_FIELD_KINDS.includes(f.kind)).length
   const percentage = progressPercentage(Object.keys(values).length, questionCount)
 
+  // Someone who already got past the first question skips the welcome screen on return.
+  const storedFieldId = getStoredFieldId(form.id, autoSave)
+  const resumeIndex = Math.max(
+    fields.findIndex(f => f.id === storedFieldId && f.kind !== FieldKindEnum.THANK_YOU),
+    0
+  )
+
   return {
     welcomeField,
     thankYouField,
@@ -121,8 +128,9 @@ function initStore(
     percentage,
     questionCount,
     formId: form.id,
-    scrollIndex: 0,
+    scrollIndex: resumeIndex,
     scrollTo: 'next',
+    isStarted: resumeIndex > 0,
     settings: form.settings,
     autoSave,
     locale,

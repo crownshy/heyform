@@ -18,21 +18,46 @@ import { IMapType } from '@/components/ui/typing'
 import type { IFormField } from './typings'
 import { LRU, isFile, progressPercentage, replaceHTML, validateLogicField } from './utils'
 
+function createLRU(bucket: string) {
+  return new LRU({
+    bucket,
+    store: {
+      getItem: store2.get.bind(store2),
+      setItem: store2.set.bind(store2),
+      removeItem: store2.remove.bind(store2)
+    }
+  })
+}
+
 // LRU cache for form fields
 let LRU_CACHE: LRU
 
 export function getLRU(): LRU {
   if (!LRU_CACHE) {
-    LRU_CACHE = new LRU({
-      bucket: 'HEYFORM_DATA',
-      store: {
-        getItem: store2.get.bind(store2),
-        setItem: store2.set.bind(store2),
-        removeItem: store2.remove.bind(store2)
-      }
-    })
+    LRU_CACHE = createLRU('HEYFORM_DATA')
   }
   return LRU_CACHE
+}
+
+// The question the participant was on, so a reload reopens there. It is kept out of the answers
+// cache because that cache is rewritten from the answers alone and everything in it is submitted.
+let POSITION_CACHE: LRU
+
+function getPositionLRU(): LRU {
+  if (!POSITION_CACHE) {
+    POSITION_CACHE = createLRU('HEYFORM_POSITION')
+  }
+  return POSITION_CACHE
+}
+
+export function getStoredFieldId(formId: string, autoSave?: boolean): string | undefined {
+  if (!autoSave) {
+    return
+  }
+
+  const fieldId = getPositionLRU().get(formId)
+
+  return helper.isValid(fieldId) ? fieldId : undefined
 }
 
 export function getStorage(formId: string, autoSave?: boolean) {
@@ -57,6 +82,7 @@ export function getStorage(formId: string, autoSave?: boolean) {
 
 export function removeStorage(formId: string) {
   getLRU().remove(formId)
+  getPositionLRU().remove(formId)
 }
 
 export type ScrollDestination = 'next' | 'previous' | string
@@ -278,7 +304,7 @@ const actions: any = {
     }
 
     return actions.scrollTo(state, {
-      scrollIndex: 0,
+      scrollIndex: state.scrollIndex ?? 0,
       scrollTo: 'next'
     })
   },
@@ -295,6 +321,10 @@ const actions: any = {
       state.query,
       variables
     )
+
+    if (state.autoSave) {
+      getPositionLRU().put(state.formId, field.id)
+    }
 
     return {
       ...state,
