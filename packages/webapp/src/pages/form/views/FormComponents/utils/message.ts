@@ -1,3 +1,5 @@
+import { useEffect, useRef } from 'react'
+
 export function sendHideModalMessage() {
   window.parent?.postMessage(
     {
@@ -43,4 +45,42 @@ export function sendStepChangeMessage(progress: {
     },
     '*'
   )
+}
+
+// Tell an embedding parent whether it can page back and whether forward will submit, so a host
+// that hides our arrows (`?hideNavigation=true`) can page the form from its own buttons.
+export function sendNavigationStateMessage(navigation: {
+  canGoPrevious: boolean
+  isLastQuestion: boolean
+}) {
+  window.parent?.postMessage(
+    {
+      source: 'HEYFORM',
+      eventName: 'FORM_NAVIGATION_STATE',
+      ...navigation
+    },
+    '*'
+  )
+}
+
+type ParentEventName = 'REQUEST_RESIZE' | 'NAVIGATE_NEXT' | 'NAVIGATE_PREVIOUS'
+
+export function useParentMessage(eventName: ParentEventName, callback: () => void) {
+  // Held in a ref so the listener always calls the latest closure without re-subscribing.
+  const callbackRef = useRef(callback)
+  callbackRef.current = callback
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || window.parent === window) return
+
+    function onMessage(e: MessageEvent) {
+      if (e.data?.source === 'COMHAIRLE' && e.data.eventName === eventName) {
+        callbackRef.current()
+      }
+    }
+
+    window.addEventListener('message', onMessage)
+
+    return () => window.removeEventListener('message', onMessage)
+  }, [eventName])
 }

@@ -1,3 +1,4 @@
+import { helper } from '@heyform-inc/utils'
 import { IconChevronDown, IconChevronUp } from '@tabler/icons-react'
 import type { FC } from 'react'
 
@@ -16,6 +17,10 @@ export const Footer: FC = () => {
 
   function handleNext() {
     dispatch({ type: 'scrollNext' })
+  }
+
+  if (helper.isTrue(state.query.hideNavigation)) {
+    return null
   }
 
   return (

@@ -17,6 +17,7 @@ import { removeStorage, useStore } from '../store'
 import {
   sendHideModalMessage,
   sliceFieldsByLogics,
+  useParentMessage,
   useTranslation,
   validateLogicField
 } from '../utils'
@@ -263,6 +264,13 @@ export const Form: FC<FormProps> = ({
     }
 
     form.submit()
+  })
+
+  // The payment block stays mounted on every question, so only the active question may answer.
+  useParentMessage('NAVIGATE_NEXT', () => {
+    if (state.fields[state.scrollIndex!]?.id === field.id) {
+      form.submit()
+    }
   })
 
   useEffect(() => {

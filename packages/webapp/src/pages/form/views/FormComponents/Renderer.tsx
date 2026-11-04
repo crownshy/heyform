@@ -24,8 +24,10 @@ import {
   getPreferredLanguage,
   parseFields,
   progressPercentage,
+  sendNavigationStateMessage,
   sendResizeMessage,
-  sendStepChangeMessage
+  sendStepChangeMessage,
+  useParentMessage
 } from './utils'
 import { Blocks } from './views/Blocks'
 
@@ -292,6 +294,31 @@ export const Renderer: FC<RendererProps> = ({
       percentage: state.percentage
     })
   }, [state.scrollIndex, state.fields.length, state.percentage])
+
+  const isOnWelcome = !state.isStarted && !!state.welcomeField
+  const canGoPrevious = !isOnWelcome && state.scrollIndex! > 0
+  const isLastQuestion = !isOnWelcome && state.scrollIndex! >= state.fields.length - 1
+
+  function sendNavigationState() {
+    if (typeof window === 'undefined' || window.parent === window) return
+
+    sendNavigationStateMessage({ canGoPrevious, isLastQuestion })
+  }
+
+  useEffect(sendNavigationState, [canGoPrevious, isLastQuestion])
+
+  // Our first message can land before the parent listens, so answer its resize ping as well.
+  useParentMessage('REQUEST_RESIZE', sendNavigationState)
+
+  useParentMessage('NAVIGATE_PREVIOUS', () => dispatch({ type: 'scrollPrevious' }))
+
+  // The active question's Form answers NAVIGATE_NEXT itself, so it validates like Enter does.
+  // The welcome screen has no Form, so starting the form is handled here.
+  useParentMessage('NAVIGATE_NEXT', () => {
+    if (isOnWelcome) {
+      dispatch({ type: 'setIsStarted', payload: { isStarted: true } })
+    }
+  })
 
   if (!helper.isValidArray(form.fields)) {
     return <ClosedMessage form={form} />
