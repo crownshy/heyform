@@ -28,7 +28,6 @@ import {
   sendStepChangeMessage
 } from './utils'
 import { Blocks } from './views/Blocks'
-import { Sidebar } from './views/Sidebar'
 
 export interface RendererProps {
   className?: string
@@ -329,7 +328,6 @@ export const Renderer: FC<RendererProps> = ({
         className={clsx(
           'heyform-root',
           {
-            'heyform-root-open': state.isSidebarOpen,
             'heyform-root-android': isAndroid,
             'heyform-host-scroll': isHostScroll
           },
@@ -343,7 +341,6 @@ export const Renderer: FC<RendererProps> = ({
         >
           <Blocks />
         </div>
-        {state.settings?.enableQuestionList && <Sidebar />}
       </div>
     </StoreContext.Provider>
   )
