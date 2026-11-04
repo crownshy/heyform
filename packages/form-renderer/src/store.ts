@@ -46,8 +46,8 @@ export function getStorage(formId: string, autoSave?: boolean) {
     const cache = getLRU().get(formId)
 
     if (helper.isValid(cache)) {
-      Object.keys(values).forEach(key => {
-        const value = values[key]
+      Object.keys(cache).forEach(key => {
+        const value = cache[key]
 
         if (helper.isValid(value)) {
           values[key] = value
