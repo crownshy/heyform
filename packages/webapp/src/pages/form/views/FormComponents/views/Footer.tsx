@@ -1,11 +1,10 @@
-import { IconChevronDown, IconChevronUp, IconLayoutGrid } from '@tabler/icons-react'
+import { IconChevronDown, IconChevronUp } from '@tabler/icons-react'
 import type { FC } from 'react'
 
 import { Button, Tooltip } from '@/components/ui'
 
 import { useStore } from '../store'
 import { useTranslation } from '../utils'
-import { Branding } from './Branding'
 
 export const Footer: FC = () => {
   const { state, dispatch } = useStore()
@@ -19,15 +18,6 @@ export const Footer: FC = () => {
     dispatch({ type: 'scrollNext' })
   }
 
-  function handleToggleSidebar() {
-    dispatch({
-      type: 'setIsSidebarOpen',
-      payload: {
-        isSidebarOpen: !state.isSidebarOpen
-      }
-    })
-  }
-
   return (
     <div className="heyform-footer">
       <div className="heyform-footer-wrapper">
@@ -35,18 +25,6 @@ export const Footer: FC = () => {
 
         <div className="heyform-footer-right">
           <div className="heyform-pagination">
-            {state.settings?.enableQuestionList && (
-              <Tooltip ariaLabel={t('Questions')} placement="top">
-                <div>
-                  <Button.Link
-                    className="heyform-sidebar-toggle"
-                    trailing={<IconLayoutGrid />}
-                    onClick={handleToggleSidebar}
-                  />
-                </div>
-              </Tooltip>
-            )}
-
             <Tooltip ariaLabel={t('Previous question')} placement="top">
               <div>
                 <Button.Link
@@ -71,8 +49,6 @@ export const Footer: FC = () => {
               </div>
             </Tooltip>
           </div>
-
-          <Branding />
         </div>
       </div>
     </div>

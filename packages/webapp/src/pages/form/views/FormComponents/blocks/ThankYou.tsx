@@ -3,7 +3,6 @@ import type { FC } from 'react'
 import { useEffect } from 'react'
 
 import { useStore } from '../store'
-import { Branding } from '../views/Branding'
 import type { BlockProps } from './Block'
 import { Block } from './Block'
 
@@ -25,14 +24,11 @@ export const ThankYou: FC<BlockProps> = ({ field, className, children, ...restPr
   }, [])
 
   return (
-    <>
-      <Block
-        className={clsx('heyform-empty-state heyform-thank-you', className)}
-        field={field}
-        isScrollable={false}
-        {...restProps}
-      />
-      <Branding />
-    </>
+    <Block
+      className={clsx('heyform-empty-state heyform-thank-you', className)}
+      field={field}
+      isScrollable={false}
+      {...restProps}
+    />
   )
 }

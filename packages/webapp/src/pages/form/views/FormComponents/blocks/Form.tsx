@@ -303,17 +303,6 @@ export const Form: FC<FormProps> = ({
           <Field shouldUpdate={true}>
             <Submit text={t('Submit')} loading={loading} />
           </Field>
-          {isLastBlock && (
-            <div className="heyform-submit-warn">
-              {t('Never submit passwords!')} -{' '}
-              <a
-                href={state.reportAbuseURL || 'https://docs.heyform.net/report-abuse'}
-                target="_blank"
-              >
-                {t('Report Abuse')}
-              </a>
-            </div>
-          )}
         </>
       ) : (
         <div className="mt-8 flex items-center gap-2">
