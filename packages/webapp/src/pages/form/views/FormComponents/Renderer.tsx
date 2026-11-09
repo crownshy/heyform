@@ -24,6 +24,7 @@ import {
   getPreferredLanguage,
   parseFields,
   progressPercentage,
+  sendActivityMessage,
   sendNavigationStateMessage,
   sendResizeMessage,
   sendStepChangeMessage,
@@ -47,6 +48,9 @@ export interface RendererProps {
 // outside the height we measure: the group header, and a non-inline media layout (h-64 below
 // 800px). An inline layout renders inside block-main and is already counted.
 const CHROME_ABOVE_MAIN = ['.heyform-block-group', '.heyform-block-scroll > .heyform-layout']
+
+const ACTIVITY_REPORT_INTERVAL_MS = 10_000
+const ACTIVITY_EVENTS = ['mousemove', 'mousedown', 'resize', 'keydown', 'touchstart', 'wheel']
 
 // Margins included, and 0 when the element is out of the flow: above 800px both selectors above are
 // absolutely positioned and overlay the question rather than pushing it down.
@@ -283,6 +287,33 @@ export const Renderer: FC<RendererProps> = ({
       window.removeEventListener('message', onParentMessage)
     }
   }, [isHostScroll, state.scrollIndex, state.isStarted, state.isSubmitted])
+
+  // Tell an embedding parent the participant is active, at most once per
+  // ACTIVITY_REPORT_INTERVAL_MS. Registered once for the component's lifetime so the throttle
+  // spans question changes instead of resetting on each one.
+  useEffect(() => {
+    if (typeof window === 'undefined' || window.parent === window) return
+
+    let lastReported = 0
+
+    function reportActivity() {
+      const now = Date.now()
+      if (now - lastReported < ACTIVITY_REPORT_INTERVAL_MS) return
+      lastReported = now
+      sendActivityMessage()
+    }
+
+    for (const event of ACTIVITY_EVENTS) {
+      window.addEventListener(event, reportActivity, { passive: true, capture: true })
+    }
+
+    return () => {
+      for (const event of ACTIVITY_EVENTS) {
+        // `capture` must match the add call, or the browser treats it as a different listener.
+        window.removeEventListener(event, reportActivity, { capture: true })
+      }
+    }
+  }, [])
 
   // Tell an embedding parent when the active question changes so it can scroll the page back to the
   // top; the iframe auto-sizes to each question, so after clicking Next the parent window would
