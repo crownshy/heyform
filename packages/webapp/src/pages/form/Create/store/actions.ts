@@ -10,7 +10,6 @@ import { clone, helper, nanoid } from '@heyform-inc/utils'
 
 import type { FormField } from '@/models'
 import { getValidLogics, serializeFields } from '@/pages/form/Create/utils'
-import { FormService } from '@/service'
 
 import type {
   AddFieldAction,
@@ -381,8 +380,8 @@ export function deleteField(state: IState, { id, parentId }: DeleteFieldAction['
 }
 
 export function setLogics(state: IState, logics: Logic[] = []): IState {
-  FormService.updateLogics(state.formId, logics)
-
+  // Persisted by the FormBuilder component (keyed off this new reference),
+  // not here, so the save can be serialized against reversion correctly.
   return {
     ...state,
     logics
@@ -419,8 +418,8 @@ export function cleanLogics(state: IState): IState {
 }
 
 export function setVariables(state: IState, variables: Variable[] = []): IState {
-  FormService.updateVariables(state.formId, variables)
-
+  // Persisted by the FormBuilder component (keyed off this new reference),
+  // not here, so the save can be serialized against reversion correctly.
   return {
     ...state,
     variables

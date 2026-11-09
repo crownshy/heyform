@@ -509,6 +509,10 @@ class LogicInput {
 export class UpdateFormLogicsInput extends FormDetailInput {
   @Field(type => [LogicInput])
   logics: Logic[]
+
+  // Optimistic concurrency guard; see FormModel.reversion
+  @Field({ nullable: true })
+  reversion?: number
 }
 
 @InputType()
@@ -531,6 +535,10 @@ class VariableInput {
 export class UpdateFormVariablesInput extends FormDetailInput {
   @Field(type => [VariableInput])
   variables: Variable[]
+
+  // Optimistic concurrency guard; see FormModel.reversion
+  @Field({ nullable: true })
+  reversion?: number
 }
 
 @InputType()
@@ -538,6 +546,10 @@ export class UpdateFormSchemasInput extends FormDetailInput {
   @Field(type => [FormFieldInput])
   @IsArray()
   fields: FormField[]
+
+  // Optimistic concurrency guard; see FormModel.reversion
+  @Field({ nullable: true })
+  reversion?: number
 }
 
 @InputType()

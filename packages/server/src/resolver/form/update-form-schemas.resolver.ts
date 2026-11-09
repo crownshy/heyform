@@ -14,9 +14,13 @@ export class UpdateFormSchemasResolver {
   @Mutation(returns => Boolean)
   @FormGuard()
   async updateFormSchemas(@Args('input') input: UpdateFormSchemasInput): Promise<boolean> {
-    return this.formService.update(input.formId, {
-      fields: input.fields,
-      fieldUpdateAt: timestamp()
-    })
+    return this.formService.updateWithReversion(
+      input.formId,
+      {
+        fields: input.fields,
+        fieldUpdateAt: timestamp()
+      },
+      input.reversion
+    )
   }
 }
