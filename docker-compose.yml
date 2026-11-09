@@ -1,0 +1,54 @@
+# Local HeyForm: `docker compose up --build`, then open http://localhost:8000.
+# The image bakes in the built packages, so re-run with --build after any code change.
+# The first user to register becomes the admin. `docker compose down -v` wipes the database.
+services:
+  mongo:
+    image: mongo:6
+    restart: unless-stopped
+    ports:
+      - '27017:27017'
+    volumes:
+      - heyform-mongo:/data/db
+    healthcheck:
+      test: ['CMD', 'mongosh', '--quiet', '--eval', "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: redis:7
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.local
+    restart: unless-stopped
+    depends_on:
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - '8000:8000'
+    environment:
+      NODE_ENV: production
+      APP_LISTEN_PORT: '8000'
+      APP_LISTEN_HOSTNAME: 0.0.0.0
+      APP_HOMEPAGE_URL: http://localhost:8000
+      APP_DISABLE_REGISTRATION: 'false'
+      MONGO_URI: mongodb://mongo:27017/heyform
+      SESSION_KEY: local-dev-session-key-change-me
+      FORM_ENCRYPTION_KEY: local-dev-encryption-key-change-me
+      REDIS_HOST: redis
+      REDIS_PORT: '6379'
+
+volumes:
+  heyform-mongo:
