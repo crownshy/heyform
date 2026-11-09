@@ -40,7 +40,6 @@ const FormBuilder: FC<{ form: FormModel }> = ({ form }) => {
   const initialState: IState = {
     formId: form.id,
     version: 0,
-    reversion: form.reversion || 0,
     references: [],
     activeTabName: 'question',
     variables: form.variables,
@@ -52,10 +51,19 @@ const FormBuilder: FC<{ form: FormModel }> = ({ form }) => {
   const store = useMemo(() => ({ state, dispatch }), [state])
 
   // Always-current snapshot of state for use inside queued saves, so a save
-  // reads the latest fields/logics/variables/reversion at the moment it
-  // actually runs rather than whatever was current when it was scheduled.
+  // reads the latest fields/logics/variables at the moment it actually runs
+  // rather than whatever was current when it was scheduled.
   const stateRef = useRef(state)
   stateRef.current = state
+
+  // reversion/conflict live in refs, not reducer state: a dispatch only
+  // lands in stateRef on the next render, but the write-lock chain below
+  // can advance to the next queued save on the same microtask turn a save
+  // settles on (before that render happens). Reading a React-state copy of
+  // reversion there would hand the next save a value one write behind,
+  // making it self-conflict against a save this same tab just made.
+  const reversionRef = useRef(form.reversion || 0)
+  const conflictRef = useRef(false)
 
   // Fields, logics and variables are saved independently (separate
   // mutations), but all three share one optimistic-concurrency counter on
@@ -125,11 +133,11 @@ const FormBuilder: FC<{ form: FormModel }> = ({ form }) => {
   }
 
   function handleConflict() {
-    if (stateRef.current.conflict) {
+    if (conflictRef.current) {
       return
     }
 
-    dispatch({ type: 'setConflict' })
+    conflictRef.current = true
     fieldsQueue.clear()
     logicsQueue.clear()
     variablesQueue.clear()
@@ -137,19 +145,23 @@ const FormBuilder: FC<{ form: FormModel }> = ({ form }) => {
     notification.error({
       title: 'Form changed elsewhere',
       message:
-        'Someone else saved changes to this form while you were editing, so your last change could not be saved. Reload the page to continue on the latest version.',
-      duration: 0
+        'Someone else saved changes to this form while you were editing, so your last change could not be saved.',
+      duration: 0,
+      action: {
+        label: 'Reload latest version',
+        onClick: () => window.location.reload()
+      }
     })
   }
 
   async function withConflictHandling(op: () => Promise<unknown>) {
-    if (stateRef.current.conflict) {
+    if (conflictRef.current) {
       return
     }
 
     try {
       await serialize(op)
-      dispatch({ type: 'incrementReversion' })
+      reversionRef.current += 1
     } catch (err: any) {
       if (err.message === FORM_REVISION_CONFLICT_MESSAGE) {
         handleConflict()
@@ -165,27 +177,19 @@ const FormBuilder: FC<{ form: FormModel }> = ({ form }) => {
 
   async function syncForm() {
     await withConflictHandling(() =>
-      FormService.updateFormSchemas(
-        form.id,
-        getUpdates(stateRef.current.fields!),
-        stateRef.current.reversion
-      )
+      FormService.updateFormSchemas(form.id, getUpdates(stateRef.current.fields!), reversionRef.current)
     )
   }
 
   async function syncLogics() {
     await withConflictHandling(() =>
-      FormService.updateLogics(form.id, stateRef.current.logics || [], stateRef.current.reversion)
+      FormService.updateLogics(form.id, stateRef.current.logics || [], reversionRef.current)
     )
   }
 
   async function syncVariables() {
     await withConflictHandling(() =>
-      FormService.updateVariables(
-        form.id,
-        stateRef.current.variables || [],
-        stateRef.current.reversion
-      )
+      FormService.updateVariables(form.id, stateRef.current.variables || [], reversionRef.current)
     )
   }
 

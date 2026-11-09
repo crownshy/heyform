@@ -13,14 +13,6 @@ export interface IState {
   hiddenFields: HiddenField[]
   // Version to detect changes whether we need to sync with server or not
   version: number
-  // Server-side optimistic concurrency token (FormModel.reversion). Sent with
-  // every save and bumped locally on success so we can detect another
-  // tab/teammate having saved over us in the meantime.
-  reversion: number
-  // Set once a save is rejected because `reversion` is stale. Further
-  // autosaves are suspended until the user reloads to avoid repeatedly
-  // clobbering someone else's edits (or spamming conflict notifications).
-  conflict?: boolean
   questions: Partial<FormField>[]
   references: Partial<FormField>[]
   // Selected field id
@@ -163,14 +155,6 @@ export interface SetActiveTabNameAction {
   }
 }
 
-export interface IncrementReversionAction {
-  type: 'incrementReversion'
-}
-
-export interface SetConflictAction {
-  type: 'setConflict'
-}
-
 export interface CreateHiddenFieldAction {
   type: 'createHiddenField'
   payload: HiddenField
@@ -219,8 +203,6 @@ export type IAction =
   | CreateHiddenFieldAction
   | EditHiddenFieldAction
   | DeleteHiddenFieldAction
-  | IncrementReversionAction
-  | SetConflictAction
 
 const SYNC_ACTIONS = [
   'setFields',
@@ -247,18 +229,6 @@ function handleAction(state: IState, action: IAction): IState {
 
 export const storeReducer = (state: IState, action: IAction) => {
   switch (action.type) {
-    case 'incrementReversion':
-      return {
-        ...state,
-        reversion: state.reversion + 1
-      }
-
-    case 'setConflict':
-      return {
-        ...state,
-        conflict: true
-      }
-
     case 'setFields':
     case 'selectField':
     case 'addField':

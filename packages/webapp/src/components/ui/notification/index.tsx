@@ -17,12 +17,18 @@ import { useTransition } from 'react-transition-state'
 import Button from '../button'
 import Spin from '../spin'
 
+export interface NotificationAction {
+  label: string
+  onClick: () => void
+}
+
 export interface NotificationOptions {
   id?: string
   icon?: ReactNode
   title?: string
   message?: string
   duration?: number
+  action?: NotificationAction
 }
 
 export interface NotificationProps extends NotificationOptions {
@@ -40,6 +46,7 @@ const Notification: FC<NotificationProps> = ({
   title,
   message,
   duration = 8000,
+  action,
   onExited
 }) => {
   function handleStateChange({ state }: any) {
@@ -88,6 +95,13 @@ const Notification: FC<NotificationProps> = ({
             <div className="notification-body">
               <p className="notification-title">{title}</p>
               {message && <p className="notification-message">{message}</p>}
+              {action && (
+                <div className="notification-action">
+                  <Button type="primary" onClick={action.onClick}>
+                    {action.label}
+                  </Button>
+                </div>
+              )}
             </div>
             <div className="notification-close">
               <Button.Link leading={CloseIcon} onClick={handleClickCallback} />
