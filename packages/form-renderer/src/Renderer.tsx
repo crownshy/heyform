@@ -27,6 +27,9 @@ import {
 import { Blocks } from './views/Blocks'
 import { Sidebar } from './views/Sidebar'
 
+const ACTIVITY_REPORT_INTERVAL_MS = 10_000
+const ACTIVITY_EVENTS = ['mousemove', 'mousedown', 'resize', 'keydown', 'touchstart', 'wheel']
+
 export interface FormRendererProps {
   className?: string
   form: IFormModel
@@ -176,9 +179,7 @@ export const FormRenderer: FC<FormRendererProps> = ({
 
     emit()
 
-    const wrapper = document.querySelector<HTMLElement>(
-      '.heyform-body-active .heyform-block-main'
-    )
+    const wrapper = document.querySelector<HTMLElement>('.heyform-body-active .heyform-block-main')
     const observer = new ResizeObserver(emit)
 
     if (wrapper) {
@@ -193,6 +194,33 @@ export const FormRenderer: FC<FormRendererProps> = ({
       window.removeEventListener('resize', emit)
     }
   }, [state.scrollIndex, state.isStarted, state.instanceId])
+
+  // Tell an embedding parent the participant is active, at most once per
+  // ACTIVITY_REPORT_INTERVAL_MS. Registered once for the component's lifetime so the throttle
+  // spans question changes instead of resetting on each one.
+  useEffect(() => {
+    if (typeof window === 'undefined' || window.parent === window) return
+
+    let lastReported = 0
+
+    function reportActivity() {
+      const now = Date.now()
+      if (now - lastReported < ACTIVITY_REPORT_INTERVAL_MS) return
+      lastReported = now
+      sendMessageToParent('USER_ACTIVITY')
+    }
+
+    for (const event of ACTIVITY_EVENTS) {
+      window.addEventListener(event, reportActivity, { passive: true, capture: true })
+    }
+
+    return () => {
+      for (const event of ACTIVITY_EVENTS) {
+        // `capture` must match the add call, or the browser treats it as a different listener.
+        window.removeEventListener(event, reportActivity, { capture: true })
+      }
+    }
+  }, [])
 
   // Form suspended
   if (form.suspended) {

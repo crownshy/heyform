@@ -63,6 +63,18 @@ export function sendNavigationStateMessage(navigation: {
   )
 }
 
+// Tell an embedding parent the participant is interacting with the form, so it can treat them as
+// active (e.g. keep a session alive). The caller throttles this.
+export function sendActivityMessage() {
+  window.parent?.postMessage(
+    {
+      source: 'HEYFORM',
+      eventName: 'USER_ACTIVITY'
+    },
+    '*'
+  )
+}
+
 type ParentEventName = 'REQUEST_RESIZE' | 'NAVIGATE_NEXT' | 'NAVIGATE_PREVIOUS'
 
 export function useParentMessage(eventName: ParentEventName, callback: () => void) {
