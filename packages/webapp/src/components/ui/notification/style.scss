@@ -46,6 +46,14 @@
   @apply mt-1 text-sm text-slate-500;
 }
 
+.notification-action {
+  @apply mt-3;
+
+  button {
+    @apply text-xs px-3 py-1.5;
+  }
+}
+
 .notification-close {
   @apply ml-4 flex-shrink-0 flex;
 

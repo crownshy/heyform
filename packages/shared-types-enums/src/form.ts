@@ -244,6 +244,7 @@ export interface FormModel {
   fields?: FormField[]
   hiddenFields?: HiddenField[]
   fieldUpdateAt?: number
+  reversion?: number
   logics?: Logic[]
   translations?: Record<string, Record<string, any>>
   variables?: Variable[]

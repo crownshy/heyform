@@ -15,8 +15,12 @@ export class UpdateFormVariablesResolver {
   @Mutation(returns => Boolean)
   @FormGuard()
   async updateFormVariables(@Args('input') input: UpdateFormVariablesInput): Promise<boolean> {
-    return this.formService.update(input.formId, {
-      variables: input.variables
-    })
+    return this.formService.updateWithReversion(
+      input.formId,
+      {
+        variables: input.variables
+      },
+      input.reversion
+    )
   }
 }

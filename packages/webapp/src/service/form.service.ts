@@ -133,37 +133,40 @@ export class FormService {
     })
   }
 
-  static updateFormSchemas(formId: string, updates: Record<string, any>) {
+  static updateFormSchemas(formId: string, updates: Record<string, any>, reversion?: number) {
     return request.mutate({
       mutation: UPDATE_FORM_SCHEMAS_GQL,
       variables: {
         input: {
           formId,
+          reversion,
           ...updates
         }
       }
     })
   }
 
-  static updateLogics(formId: string, logics: Logic[]) {
+  static updateLogics(formId: string, logics: Logic[], reversion?: number) {
     return request.mutate({
       mutation: UPDATE_FORM_LOGICS,
       variables: {
         input: {
           formId,
-          logics
+          logics,
+          reversion
         }
       }
     })
   }
 
-  static updateVariables(formId: string, variables: Variable[]) {
+  static updateVariables(formId: string, variables: Variable[], reversion?: number) {
     return request.mutate({
       mutation: UPDATE_FORM_VARIABLES,
       variables: {
         input: {
           formId,
-          variables
+          variables,
+          reversion
         }
       }
     })

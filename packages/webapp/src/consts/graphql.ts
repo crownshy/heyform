@@ -438,6 +438,7 @@ export const FORM_DETAIL_GQL = gql`
       }
       logics
       variables
+      reversion
       fieldUpdateAt
       themeSettings {
         theme

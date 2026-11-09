@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { ConflictException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 
@@ -16,6 +16,14 @@ interface UpdateFiledOptions {
   fieldId: string
   updates: Record<string, any>
 }
+
+// Keep this message in sync with webapp's FORM_REVISION_CONFLICT_MESSAGE,
+// which matches on it to show a dedicated "someone else edited this form" notice.
+// Not exported: this file is barrel-imported as `import * as Services` in
+// app.module.ts and spread into `providers: [...Object.values(Services)]`,
+// so any plain export here (not just classes) gets registered as a provider.
+const FORM_REVISION_CONFLICT_MESSAGE =
+  'This form was changed in another tab or by a teammate while you were editing. Refresh the page to see the latest version before making more changes.'
 
 @Injectable()
 export class FormService {
@@ -157,6 +165,36 @@ export class FormService {
       updates
     )
     return !!result?.ok
+  }
+
+  /**
+   * Update a form while guarding against concurrent editors clobbering each
+   * other's changes. The caller must supply the `reversion` it last read;
+   * if the stored document has since moved on (another tab/teammate saved
+   * in the meantime) the write is rejected instead of silently overwriting
+   * their changes, and `reversion` is incremented atomically on success.
+   */
+  public async updateWithReversion(
+    formId: string,
+    updates: Record<string, any>,
+    expectedReversion = 0
+  ): Promise<boolean> {
+    const result = await this.formModel.updateOne(
+      {
+        _id: formId,
+        reversion: expectedReversion
+      },
+      {
+        $set: updates,
+        $inc: { reversion: 1 }
+      }
+    )
+
+    if (!result?.n) {
+      throw new ConflictException(FORM_REVISION_CONFLICT_MESSAGE)
+    }
+
+    return true
   }
 
   public async delete(formId: string | string[]): Promise<boolean> {

@@ -15,8 +15,12 @@ export class UpdateFormLogicsResolver {
   @Mutation(returns => Boolean)
   @FormGuard()
   async updateFormLogics(@Args('input') input: UpdateFormLogicsInput): Promise<boolean> {
-    return this.formService.update(input.formId, {
-      logics: input.logics
-    })
+    return this.formService.updateWithReversion(
+      input.formId,
+      {
+        logics: input.logics
+      },
+      input.reversion
+    )
   }
 }
