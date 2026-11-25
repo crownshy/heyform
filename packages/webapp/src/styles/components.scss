@@ -1,3 +1,16 @@
+// Keyboard focus ring in a theme colour. `:not(:disabled)` out-ranks the shared button's
+// blue ring and focus:outline-none, which load after this file.
+@mixin focus-ring($color: var(--heyform-answer-color), $offset: 2px) {
+  &:focus:not(:disabled) {
+    box-shadow: none;
+  }
+
+  &:focus-visible:not(:disabled) {
+    outline: 2px solid $color;
+    outline-offset: $offset;
+  }
+}
+
 // ----------------------------------------------------------------------------
 // Radio
 .heyform-radio {
@@ -5,7 +18,8 @@
   min-height: 2.5rem;
   outline: none;
 
-  &:focus-visible .heyform-radio-container {
+  &:focus-visible .heyform-radio-container,
+  &.heyform-radio-other:focus-within .heyform-radio-container {
     outline: 2px solid var(--heyform-answer-color);
     outline-offset: 2px;
   }
@@ -501,6 +515,7 @@
 .heyform-skip-button {
   @apply text-base px-3 py-2;
   color: var(--heyform-label-color);
+  @include focus-ring;
 
   &:hover {
     color: var(--heyform-answer-color);
@@ -875,11 +890,11 @@
   }
 
   button.button {
+    @include focus-ring;
+
     &,
-    &:focus,
     &:hover {
       box-shadow: none;
-      outline: none;
       background: none;
     }
   }
@@ -1114,11 +1129,10 @@
     @apply w-full h-full px-3 py-2 text-xl border-0 bg-transparent;
     border-left: 1px solid transparent;
     border-right: 1px solid transparent;
+    @include focus-ring($offset: -2px);
 
     &,
     &:focus {
-      outline: none;
-      box-shadow: none;
       margin-bottom: 0;
     }
 
@@ -1317,10 +1331,7 @@
     }
   }
 
-  &:focus {
-    outline: none !important;
-    box-shadow: none !important;
-  }
+  @include focus-ring(var(--heyform-button-color));
 }
 
 button.heyform-pagination-next {
@@ -1352,10 +1363,11 @@ button.heyform-pagination-previous {
 }
 
 button.heyform-submit-button {
-  @apply inline-flex items-center justify-center px-5 py-1.5 text-lg font-medium shadow-none outline-none rounded-md;
+  @apply inline-flex items-center justify-center px-5 py-1.5 text-lg font-medium shadow-none rounded-md;
   min-width: 7.5rem;
   background-color: var(--heyform-button-color);
   color: var(--heyform-button-text-color);
+  @include focus-ring(var(--heyform-button-color));
 
   &:hover {
     background-color: var(--heyform-button-opacity-80-color);
@@ -1421,8 +1433,7 @@ button.heyform-submit-button {
 
   button.button {
     margin-right: -0.3125rem;
-    outline: none;
-    box-shadow: none;
+    @include focus-ring;
   }
 
   .button-leading {
