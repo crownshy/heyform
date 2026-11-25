@@ -1194,7 +1194,7 @@
   }
 }
 
-.heyform-payment-item-error + .heyform-validation-wrapper {
+.heyform-payment-item-error + .heyform-field-error .heyform-validation-wrapper {
   @apply hidden;
 }
 
