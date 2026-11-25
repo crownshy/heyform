@@ -4,7 +4,7 @@ import { FormField, Input } from '../components'
 import { useStore } from '../store'
 import { useTranslation } from '../utils'
 import type { BlockProps } from './Block'
-import { Block } from './Block'
+import { Block, blockTitleId } from './Block'
 import { Form } from './Form'
 
 export const ShortText: FC<BlockProps> = ({ field, ...restProps }) => {
@@ -33,7 +33,7 @@ export const ShortText: FC<BlockProps> = ({ field, ...restProps }) => {
             }
           ]}
         >
-          <Input placeholder={t('Your answer goes here')} />
+          <Input aria-labelledby={blockTitleId(field)} placeholder={t('Your answer goes here')} />
         </FormField>
       </Form>
     </Block>

@@ -4,7 +4,7 @@ import { FormField, Textarea } from '../components'
 import { useStore } from '../store'
 import { useTranslation } from '../utils'
 import type { BlockProps } from './Block'
-import { Block } from './Block'
+import { Block, blockTitleId } from './Block'
 import { Form } from './Form'
 
 export const LongText: FC<BlockProps> = ({ field, ...restProps }) => {
@@ -33,7 +33,10 @@ export const LongText: FC<BlockProps> = ({ field, ...restProps }) => {
             }
           ]}
         >
-          <Textarea placeholder={t('Your answer goes here')} />
+          <Textarea
+            aria-labelledby={blockTitleId(field)}
+            placeholder={t('Your answer goes here')}
+          />
         </FormField>
       </Form>
     </Block>

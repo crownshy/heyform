@@ -29,11 +29,7 @@ const LayoutComponent: FC<FormLayout> = props => {
 
   return (
     <div className={`heyform-layout heyform-layout-${props!.align}`}>
-      <img
-        src={props!.mediaUrl}
-        style={filterStyle(props!.brightness)}
-        alt="HeyForm layout image"
-      />
+      <img src={props!.mediaUrl} style={filterStyle(props!.brightness)} alt="" />
     </div>
   )
 }

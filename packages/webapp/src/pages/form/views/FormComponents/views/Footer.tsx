@@ -34,6 +34,7 @@ export const Footer: FC = () => {
               <div>
                 <Button.Link
                   className="heyform-pagination-previous"
+                  aria-label={t('Previous question')}
                   trailing={<IconChevronUp />}
                   disabled={state.scrollIndex! < 1}
                   onClick={handlePrevious}
@@ -45,6 +46,7 @@ export const Footer: FC = () => {
               <div>
                 <Button.Link
                   className="heyform-pagination-next"
+                  aria-label={t('Next question')}
                   trailing={<IconChevronDown />}
                   disabled={
                     state.isScrollNextDisabled || state.scrollIndex! >= state.fields.length - 1

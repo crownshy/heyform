@@ -4,7 +4,7 @@ import { FormField, Input } from '../components'
 import { useStore } from '../store'
 import { useTranslation } from '../utils'
 import type { BlockProps } from './Block'
-import { Block } from './Block'
+import { Block, blockTitleId } from './Block'
 import { Form } from './Form'
 
 export const Email: FC<BlockProps> = ({ field, ...restProps }) => {
@@ -34,7 +34,11 @@ export const Email: FC<BlockProps> = ({ field, ...restProps }) => {
             }
           ]}
         >
-          <Input type="email" placeholder="email@example.com" />
+          <Input
+            type="email"
+            aria-labelledby={blockTitleId(field)}
+            placeholder="email@example.com"
+          />
         </FormField>
       </Form>
     </Block>
