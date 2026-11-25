@@ -17,11 +17,14 @@ export const FormField: FC<FormFieldProps> = ({ className, children, ...restProp
         return (
           <div className={clsx('heyform-form-field', className)}>
             {childNode}
-            {meta.errors.length > 0 && (
-              <div className="heyform-validation-wrapper">
-                <div className="heyform-validation-error">{meta.errors[0]}</div>
-              </div>
-            )}
+            {/* Always mounted so screen readers announce the error when it appears. */}
+            <div className="heyform-field-error" role="alert">
+              {meta.errors.length > 0 && (
+                <div className="heyform-validation-wrapper">
+                  <div className="heyform-validation-error">{meta.errors[0]}</div>
+                </div>
+              )}
+            </div>
           </div>
         )
       }}
