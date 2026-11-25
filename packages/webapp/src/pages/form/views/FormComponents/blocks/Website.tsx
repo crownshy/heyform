@@ -4,7 +4,7 @@ import { FormField, Input } from '../components'
 import { useStore } from '../store'
 import { useTranslation } from '../utils'
 import type { BlockProps } from './Block'
-import { Block } from './Block'
+import { Block, blockTitleId } from './Block'
 import { Form } from './Form'
 
 export const Website: FC<BlockProps> = ({ field, ...restProps }) => {
@@ -37,7 +37,7 @@ export const Website: FC<BlockProps> = ({ field, ...restProps }) => {
             }
           ]}
         >
-          <Input placeholder="https://example.com" />
+          <Input aria-labelledby={blockTitleId(field)} placeholder="https://example.com" />
         </FormField>
       </Form>
     </Block>

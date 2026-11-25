@@ -6,6 +6,7 @@ import { preventDefault, stopPropagation } from '@/components/ui'
 import { useTranslation } from '../utils'
 
 interface TextareaProps {
+  'aria-labelledby'?: string
   disabled?: boolean
   value?: any
   placeholder?: string
@@ -85,6 +86,8 @@ export const Textarea: FC<TextareaProps> = ({
       <div
         ref={ref}
         contentEditable={true}
+        role="textbox"
+        aria-multiline="true"
         suppressContentEditableWarning={true}
         className="heyform-textarea"
         placeholder={t('Your answer goes here')}

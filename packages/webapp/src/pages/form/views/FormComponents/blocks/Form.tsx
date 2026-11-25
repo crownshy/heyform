@@ -294,17 +294,19 @@ export const Form: FC<FormProps> = ({
       {children}
 
       {/* Field validation error */}
-      {fieldError && (
-        <div className="heyform-validation-wrapper">
-          <div className="heyform-validation-error">{fieldError}</div>
-        </div>
-      )}
+      <div role="alert">
+        {fieldError && (
+          <div className="heyform-validation-wrapper">
+            <div className="heyform-validation-error">{fieldError}</div>
+          </div>
+        )}
+      </div>
 
       {/* Submit */}
       {isLastBlock || state.isScrollNextDisabled ? (
         <>
           {submitError && (
-            <div className="heyform-validation-wrapper">
+            <div className="heyform-validation-wrapper" role="alert">
               <div className="heyform-validation-error">{submitError}</div>
             </div>
           )}

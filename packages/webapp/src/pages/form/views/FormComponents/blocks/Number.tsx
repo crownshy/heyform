@@ -4,7 +4,7 @@ import { FormField, Input } from '../components'
 import { useStore } from '../store'
 import { useTranslation } from '../utils'
 import type { BlockProps } from './Block'
-import { Block } from './Block'
+import { Block, blockTitleId } from './Block'
 import { Form } from './Form'
 
 export const Number: FC<BlockProps> = ({ field, ...restProps }) => {
@@ -34,7 +34,11 @@ export const Number: FC<BlockProps> = ({ field, ...restProps }) => {
             }
           ]}
         >
-          <Input type="number" placeholder={t('Your answer goes here')} />
+          <Input
+            type="number"
+            aria-labelledby={blockTitleId(field)}
+            placeholder={t('Your answer goes here')}
+          />
         </FormField>
       </Form>
     </Block>
