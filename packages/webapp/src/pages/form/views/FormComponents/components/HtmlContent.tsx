@@ -5,6 +5,7 @@ import { InlineTooltip } from './InlineTooltip'
 
 export interface HtmlContentProps {
   html: string
+  id?: string
   className?: string
   // The wrapping tag, e.g. 'h1' for a question title or 'div' for a description.
   as?: keyof JSX.IntrinsicElements
@@ -44,6 +45,6 @@ const options: HTMLReactParserOptions = {
   }
 }
 
-export const HtmlContent: FC<HtmlContentProps> = ({ html, className, as = 'div' }) => {
-  return createElement(as, { className }, parse(html, options))
+export const HtmlContent: FC<HtmlContentProps> = ({ html, id, className, as = 'div' }) => {
+  return createElement(as, { id, className }, parse(html, options))
 }

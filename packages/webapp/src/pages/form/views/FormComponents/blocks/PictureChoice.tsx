@@ -5,7 +5,7 @@ import { ChoiceRadioGroup, FormField, SelectHelper } from '../components'
 import { useStore } from '../store'
 import { useTranslation } from '../utils'
 import type { BlockProps } from './Block'
-import { Block } from './Block'
+import { Block, blockTitleId } from './Block'
 import { Form } from './Form'
 import { useChoicesOption, useSelectionRange } from './hook'
 
@@ -74,6 +74,7 @@ export const PictureChoice: FC<BlockProps> = ({ field, ...restProps }) => {
           ]}
         >
           <ChoiceRadioGroup
+            aria-labelledby={blockTitleId(field)}
             options={options}
             allowMultiple={field.properties?.allowMultiple}
             allowOther={field.properties?.allowOther}

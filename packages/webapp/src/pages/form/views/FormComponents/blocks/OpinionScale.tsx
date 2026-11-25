@@ -4,7 +4,7 @@ import { FormField, RadioGroup } from '../components'
 import { useStore } from '../store'
 import { isNotNil, useTranslation } from '../utils'
 import type { BlockProps } from './Block'
-import { Block } from './Block'
+import { Block, blockTitleId } from './Block'
 import { Form } from './Form'
 
 export const OpinionScale: FC<BlockProps> = ({ field, ...restProps }) => {
@@ -45,7 +45,11 @@ export const OpinionScale: FC<BlockProps> = ({ field, ...restProps }) => {
             }
           ]}
         >
-          <RadioGroup options={options} isHotkeyShow={false} />
+          <RadioGroup
+            aria-labelledby={blockTitleId(field)}
+            options={options}
+            isHotkeyShow={false}
+          />
         </FormField>
 
         <div className="heyform-opinion-scale-labels">

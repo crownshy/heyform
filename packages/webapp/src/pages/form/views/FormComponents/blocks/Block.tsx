@@ -16,6 +16,10 @@ export interface BlockProps extends IComponentProps {
   isScrollable?: boolean
 }
 
+export function blockTitleId(field: IFormField) {
+  return field.title ? `heyform-block-title-${field.id}` : undefined
+}
+
 const SPLIT_LAYOUTS = [
   FieldLayoutAlignEnum.FLOAT_LEFT,
   FieldLayoutAlignEnum.FLOAT_RIGHT,
@@ -150,6 +154,7 @@ export const Block: FC<BlockProps> = ({
                       {field.title && (
                         <HtmlContent
                           as="h1"
+                          id={blockTitleId(field)}
                           className="heyform-block-title"
                           html={removeHeading(field.title as string)}
                         />

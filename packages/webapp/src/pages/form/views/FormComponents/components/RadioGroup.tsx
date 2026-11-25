@@ -7,6 +7,7 @@ import type { IComponentProps } from '@/components/ui/typing'
 
 import type { RadioOption } from './Radio'
 import { Radio } from './Radio'
+import { groupRole, moveOptionFocus, optionRole, optionTabIndex } from './optionKeyboard'
 
 interface RadioGroupProps extends Omit<IComponentProps, 'onChange'> {
   options: RadioOption[]
@@ -54,6 +55,7 @@ export const RadioGroup: FC<RadioGroupProps> = ({
   }
 
   const handleClickCallback = useCallback(handleClick, [values, isDisabled])
+  const checkedIndex = options.findIndex(option => values.includes(option.value))
 
   return (
     <div
@@ -64,15 +66,19 @@ export const RadioGroup: FC<RadioGroupProps> = ({
         },
         className
       )}
+      role={groupRole(allowMultiple)}
+      onKeyDown={moveOptionFocus}
       {...restProps}
     >
-      {options.map(option => (
+      {options.map((option, index) => (
         <Radio
           key={option.value as string}
           {...option}
           enableImage={enableImage}
           isHotkeyShow={isHotkeyShow}
           isChecked={values.includes(option.value)}
+          role={optionRole(allowMultiple)}
+          tabIndex={optionTabIndex(allowMultiple, index, checkedIndex)}
           onClick={handleClickCallback}
         />
       ))}
